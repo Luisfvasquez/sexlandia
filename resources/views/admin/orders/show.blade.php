@@ -144,9 +144,9 @@
                                         <td class="px-6 py-4 text-center font-bold text-gray-600">
                                             {{ $detail->product->unit_type === 'gram' ? number_format($detail->quantity, 3) . ' Kg' : number_format($detail->quantity, 0) . ' Und' }}
                                         </td>
-                                        <td class="px-6 py-4 text-right text-gray-500">Bs.
+                                        <td class="px-6 py-4 text-right text-gray-500">$
                                             {{ number_format($detail->unit_price, 2) }}</td>
-                                        <td class="px-6 py-4 text-right font-bold text-gray-800">Bs.
+                                        <td class="px-6 py-4 text-right font-bold text-gray-800">$
                                             {{ number_format($detail->subtotal, 2) }}</td>
                                     </tr>
                                 @endforeach
@@ -166,16 +166,16 @@
                             <div class="flex justify-between text-sm text-gray-500">
                                 <span>Subtotal</span>
                                 {{-- Estos totales seguirán funcionando porque provienen del objeto Order principal --}}
-                                <span>Bs. {{ number_format($order->subtotal, 2) }}</span>
+                                <span>$ {{ number_format($order->subtotal, 2) }}</span>
                             </div>
                             <div
                                 class="flex justify-between text-xl font-black text-gray-900 border-t border-gray-200 pt-2">
                                 <span>Total</span>
-                                <span>Bs. {{ number_format($order->total, 2) }}</span>
+                                <span>$ {{ number_format($order->total, 2) }}</span>
                             </div>
                             @if ($order->exchange_rate)
                                 <div class="flex justify-end text-sm font-bold text-indigo-600">
-                                    ≈ ${{ number_format($order->total / $order->exchange_rate, 2) }} USD
+                                    ≈ Bs. {{ number_format($order->total * $order->exchange_rate, 2) }}
                                 </div>
                             @endif
                         </div>
@@ -362,7 +362,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Monto
-                                Total</label>
+                                Total (USD)</label>
                             <input type="number" step="0.01" name="amount" value="{{ $order->total }}" required
                                 class="w-full text-sm rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 font-black text-indigo-600">
                         </div>

@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if ($request->user()->hasRole('client')) {
-            return redirect()->intended(route('client.products', absolute: false));
+            return redirect()->intended(route('storefront', absolute: false));
         }
 
         if ($request->user()->hasRole('delivery')) {

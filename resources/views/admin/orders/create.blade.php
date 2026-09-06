@@ -41,8 +41,11 @@
                                         <div class="text-xs text-gray-500">Stock: <span
                                                 x-text="prod.inventory?.stock || 0"></span> Und base</div>
                                     </div>
-                                    <span class="font-black text-green-600 text-lg">Bs. <span
-                                            x-text="parseFloat(bulk.sale_price).toFixed(2)"></span></span>
+                                    <span class="font-black text-green-600 text-lg">$ <span
+                                            x-text="parseFloat(bulk.sale_price).toFixed(2)"></span>
+                                        <span class="block text-xs font-bold text-gray-400 text-right"
+                                            x-text="'Bs. ' + (parseFloat(bulk.sale_price) * exchangeRate).toFixed(2)"></span>
+                                    </span>
                                 </li>
                             </template>
                         </template>
@@ -74,7 +77,7 @@
                                 <td class="px-4 py-3">
                                     <div class="font-bold text-gray-900" x-text="item.name"></div>
                                     <div class="text-xs text-gray-500 font-bold">
-                                        <span x-text="item.presentation"></span> (A Bs. <span
+                                        <span x-text="item.presentation"></span> (A $ <span
                                             x-text="parseFloat(item.price).toFixed(2)"></span>)
                                     </div>
                                     <template
@@ -94,7 +97,9 @@
                                         title="Solo números positivos">
                                 </td>
                                 <td class="px-4 py-3 text-right font-black text-gray-900 text-lg">
-                                    Bs. <span x-text="item.subtotal.toFixed(2)"></span>
+                                    $ <span x-text="item.subtotal.toFixed(2)"></span>
+                                    <span class="block text-xs font-bold text-gray-400"
+                                        x-text="'Bs. ' + (item.subtotal * exchangeRate).toFixed(2)"></span>
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     <button @click="removeItem(index)"
@@ -177,7 +182,7 @@
                                     </template>
                                 </select>
                                 <input type="number" step="0.01" min="0" x-model="payment.amount"
-                                    @input="onPaymentInput(index)" placeholder="Monto Bs."
+                                    @input="onPaymentInput(index)" placeholder="Monto USD"
                                     class="w-full text-sm rounded border-gray-300 text-right font-bold text-emerald-700"
                                     inputmode="decimal"
                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
@@ -198,11 +203,15 @@
                 <div class="space-y-2">
                     <div class="flex justify-between items-center text-gray-300">
                         <span class="text-sm">Total Orden:</span>
-                        <span class="font-black text-xl">Bs. <span x-text="totalOrder.toFixed(2)"></span></span>
+                        <span class="text-right">
+                            <span class="font-black text-xl">$ <span x-text="totalOrder.toFixed(2)"></span></span>
+                            <span class="block text-xs text-gray-500"
+                                x-text="'Bs. ' + (totalOrder * exchangeRate).toFixed(2)"></span>
+                        </span>
                     </div>
                     <div class="flex justify-between items-center text-gray-300">
                         <span class="text-sm">Pagado en Caja:</span>
-                        <span class="font-bold text-green-400 text-lg">Bs. <span
+                        <span class="font-bold text-green-400 text-lg">$ <span
                                 x-text="amountReceived.toFixed(2)"></span></span>
                     </div>
 
@@ -211,13 +220,13 @@
                         class="flex justify-between items-center bg-red-500/20 p-2 rounded border border-red-500 mt-2"
                         style="display: none;">
                         <span class="text-red-300 text-xs font-bold uppercase">Fiado (Deuda)</span>
-                        <span class="font-black text-red-400">Bs. <span x-text="amountPending.toFixed(2)"></span></span>
+                        <span class="font-black text-red-400">$ <span x-text="amountPending.toFixed(2)"></span></span>
                     </div>
                     <div x-show="amountPending < 0"
                         class="flex justify-between items-center bg-blue-500/20 p-2 rounded border border-blue-500 mt-2"
                         style="display: none;">
                         <span class="text-blue-300 text-xs font-bold uppercase">Cambio / Vuelto</span>
-                        <span class="font-black text-blue-400">Bs. <span
+                        <span class="font-black text-blue-400">$ <span
                                 x-text="Math.abs(amountPending).toFixed(2)"></span></span>
                     </div>
 

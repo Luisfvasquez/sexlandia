@@ -5,14 +5,14 @@
             <h2 class="text-gray-500 text-sm font-medium uppercase">Total Facturas Procesadas</h2>
             <p class="text-2xl font-bold text-gray-800">{{ $totalPurchases }}</p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow border-l-4 border-indigo-500">
-            <h2 class="text-gray-500 text-sm font-medium uppercase">Inversión Total (Bolívares)</h2>
-            <p class="text-2xl font-bold text-indigo-600">Bs. {{ number_format($totalInvestmentBs, 2) }}</p>
-        </div>
         <div class="bg-white p-6 rounded-xl shadow border-l-4 border-green-500">
-            <h2 class="text-gray-500 text-sm font-medium uppercase">Inversión Total Equivalente</h2>
-            <p class="text-2xl font-bold text-green-600">
-                $ {{ number_format($totalInvestmentUsd, 2) }}
+            <h2 class="text-gray-500 text-sm font-medium uppercase">Inversión Total (USD)</h2>
+            <p class="text-2xl font-bold text-green-600">$ {{ number_format($totalInvestmentUsd, 2) }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow border-l-4 border-indigo-500">
+            <h2 class="text-gray-500 text-sm font-medium uppercase">Equivalente en Bolívares</h2>
+            <p class="text-2xl font-bold text-indigo-600">
+                Bs. {{ number_format($totalInvestmentBs, 2) }}
             </p>
         </div>
     </div>
@@ -85,10 +85,10 @@
                                 Bs. {{ number_format($purchase->exchange_rate, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                                Bs. {{ number_format($purchase->total, 2) }}
+                                Bs. {{ number_format($purchase->total * $purchase->exchange_rate, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
-                                ${{ number_format($purchase->total / $purchase->exchange_rate, 2) }}
+                                ${{ number_format($purchase->total, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 @if ($purchase->status === 'completed')
@@ -213,15 +213,15 @@
                                                                                 {{ number_format($detail->base_quantity, 2) }}
                                                                             </td>
                                                                             <td class="px-4 py-2 text-right">Bs.
-                                                                                {{ number_format($detail->unit_cost, 2) }}
+                                                                                {{ number_format($detail->unit_cost_bs, 2) }}
                                                                             </td>
                                                                             <td
                                                                                 class="px-4 py-2 text-right text-green-600 font-semibold">
-                                                                                ${{ number_format($detail->unit_cost_usd, 2) }}
+                                                                                ${{ number_format($detail->unit_cost, 2) }}
                                                                             </td>
                                                                             <td class="px-4 py-2 text-right font-bold">
                                                                                 Bs.
-                                                                                {{ number_format($detail->subtotal, 2) }}
+                                                                                {{ number_format($detail->subtotal * $purchase->exchange_rate, 2) }}
                                                                             </td>
                                                                         </tr>
                                                                     @endforeach
@@ -246,11 +246,10 @@
                                                         <span
                                                             class="text-xs text-gray-400 block uppercase font-bold">Total
                                                             General Compra</span>
-                                                        <span class="text-2xl font-black">Bs.
+                                                        <span class="text-2xl font-black">$
                                                             {{ number_format($purchase->total, 2) }}</span>
                                                         <span
-                                                            class="text-green-400 font-bold ml-2">(${{ number_format($purchase->total / $purchase->exchange_rate, 2) }}
-                                                            USD)</span>
+                                                            class="text-green-400 font-bold ml-2">(Bs. {{ number_format($purchase->total * $purchase->exchange_rate, 2) }})</span>
                                                     </div>
                                                     <button type="button" @click="openDetail = false"
                                                         class="w-full sm:w-auto bg-white text-gray-900 font-bold px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-center shadow">

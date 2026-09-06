@@ -77,7 +77,7 @@
                                     <span class="block text-xs font-bold text-blue-500 uppercase tracking-wider">Total
                                         Deudas</span>
                                     <span
-                                        class="text-xl font-extrabold text-blue-900 font-mono">{{ number_format($totalSum, 2, ',', '.') }}</span>
+                                        class="text-xl font-extrabold text-blue-900 font-mono">${{ number_format($totalSum, 2, ',', '.') }}</span>
                                 </div>
                                 <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,7 +93,7 @@
                                     <span class="block text-xs font-bold text-green-500 uppercase tracking-wider">Total
                                         Abonado</span>
                                     <span
-                                        class="text-xl font-extrabold text-green-900 font-mono">{{ number_format($paidSum, 2, ',', '.') }}</span>
+                                        class="text-xl font-extrabold text-green-900 font-mono">${{ number_format($paidSum, 2, ',', '.') }}</span>
                                 </div>
                                 <div class="p-2 bg-green-100 rounded-lg text-green-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@
                                     <span class="block text-xs font-bold text-red-500 uppercase tracking-wider">Total
                                         Pendiente</span>
                                     <span
-                                        class="text-xl font-extrabold text-red-700 font-mono">{{ number_format($pendingSum, 2, ',', '.') }}</span>
+                                        class="text-xl font-extrabold text-red-700 font-mono">${{ number_format($pendingSum, 2, ',', '.') }}</span>
                                 </div>
                                 <div class="p-2 bg-red-100 rounded-lg text-red-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,11 +174,11 @@
                                             <td class="px-4 py-3 font-semibold text-gray-700">
                                                 {{ optional($account->order)->order_number ?? '—' }}</td>
                                             <td class="px-4 py-3 text-right font-mono font-semibold">
-                                                {{ number_format($account->total_amount, 2, ',', '.') }}</td>
+                                                ${{ number_format($account->total_amount, 2, ',', '.') }}</td>
                                             <td class="px-4 py-3 text-right font-mono text-green-600">
-                                                {{ number_format($account->paid_amount, 2, ',', '.') }}</td>
+                                                ${{ number_format($account->paid_amount, 2, ',', '.') }}</td>
                                             <td class="px-4 py-3 text-right font-mono text-red-600 font-bold">
-                                                {{ number_format($account->pending_amount, 2, ',', '.') }}</td>
+                                                ${{ number_format($account->pending_amount, 2, ',', '.') }}</td>
                                             <td class="px-4 py-3 text-gray-500">
                                                 {{ optional($account->due_date)->format('Y-m-d') ?? '—' }}</td>
                                             <td class="px-4 py-3 text-center">
@@ -279,7 +279,7 @@
                                                 </a>
                                             </td>
                                             <td class="px-4 py-3 text-right font-mono font-semibold text-gray-800">
-                                                {{ number_format($order->total, 2, ',', '.') }}</td>
+                                                ${{ number_format($order->total, 2, ',', '.') }}</td>
                                             <td class="px-4 py-3 font-semibold text-blue-600">
                                                 <div class="flex flex-col items-start gap-1">
                                                     <a href="{{ route('admin.orders.show', $order->id) }}"
@@ -441,12 +441,12 @@
                                     del Abono</label>
                                 <div class="relative rounded-lg shadow-sm">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-400 font-bold text-sm">$ / Bs.</span>
+                                        <span class="text-gray-400 font-bold text-sm">$</span>
                                     </div>
                                     <input type="number" step="0.01" min="0.01"
                                         :max="selectedAccount.pendingAmount" name="amount" x-model="paymentAmount"
                                         required
-                                        class="w-full pl-16 rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm font-bold text-gray-800"
+                                        class="w-full pl-8 rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm font-bold text-gray-800"
                                         placeholder="0.00">
                                 </div>
                                 <p class="text-xs text-gray-400 mt-1">El monto no puede superar el saldo pendiente de la
@@ -584,7 +584,7 @@
                                                 <td class="px-4 py-2.5 text-center text-gray-500 font-bold"
                                                     x-text="item.quantity + ' (' + item.bulk_name + ')'"></td>
                                                 <td class="px-4 py-2.5 text-right font-mono font-bold text-gray-800"
-                                                    x-text="'Bs. ' + parseFloat(item.subtotal).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})">
+                                                    x-text="'$ ' + parseFloat(item.subtotal).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})">
                                                 </td>
                                             </tr>
                                         </template>
@@ -594,7 +594,7 @@
                             <div class="flex justify-between items-center mt-2 px-1">
                                 <span class="text-xs font-bold text-gray-500">Monto Total de Orden:</span>
                                 <span class="font-mono font-extrabold text-blue-600"
-                                    x-text="'Bs. ' + parseFloat(selectedOrder.total).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+                                    x-text="'$ ' + parseFloat(selectedOrder.total).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
                             </div>
                         </div>
 
@@ -634,7 +634,7 @@
                                             <div class="mt-2 md:mt-0 text-right">
                                                 <span class="text-xs font-semibold block text-gray-400">Abonado</span>
                                                 <span class="font-mono font-extrabold text-green-600 text-sm"
-                                                    x-text="'Bs. ' + parseFloat(pay.amount).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+                                                    x-text="'$ ' + parseFloat(pay.amount).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
                                             </div>
                                         </div>
                                     </template>

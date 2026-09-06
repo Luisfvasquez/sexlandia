@@ -38,15 +38,16 @@ class PurchaseIndex extends Component
         return Purchase::count();
     }
 
-    public function getTotalInvestmentBs()
+    public function getTotalInvestmentUsd()
     {
+        // Los totales de compra se almacenan en USD.
         return Purchase::sum('total');
     }
 
-    public function getTotalInvestmentUsd()
+    public function getTotalInvestmentBs()
     {
-        // Evita división por cero si alguna tasa es errónea, aunque teóricamente no debería pasar
-        return Purchase::sum(DB::raw('CASE WHEN exchange_rate > 0 THEN total / exchange_rate ELSE 0 END'));
+        // Equivalente en Bs usando la tasa congelada en cada compra.
+        return Purchase::sum(DB::raw('total * COALESCE(exchange_rate, 0)'));
     }
 
     public function render()

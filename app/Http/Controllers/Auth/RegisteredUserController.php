@@ -73,7 +73,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         if ($user->hasRole('client')) {
-            return redirect(route('client.dashboard', absolute: false));
+            return redirect(route('storefront', absolute: false));
         }
 
         return redirect(route('dashboard', absolute: false));

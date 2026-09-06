@@ -27,8 +27,8 @@ class OrderDetail extends Model implements Auditable
         return [
             'quantity' => 'decimal:2',
             'base_quantity' => 'decimal:2',
-            'unit_price' => 'decimal:2',
-            'unit_cost' => 'decimal:2',
+            'unit_price' => 'decimal:4',
+            'unit_cost' => 'decimal:4',
             'subtotal' => 'decimal:2',
             'discount' => 'decimal:2',
         ];

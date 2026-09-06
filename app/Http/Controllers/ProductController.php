@@ -10,8 +10,10 @@ use App\Models\BulkType;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Product;
+use App\Services\ProductImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -152,12 +154,10 @@ class ProductController extends Controller
      */
     private function deleteAllProductImages(Product $product): void
     {
-        foreach ($product->images as $image) {
-            $directory = dirname($image->path);
-            $filename = basename($image->path);
-            $thumbPath = $directory.'/thumb_'.$filename;
+        $imageService = app(ProductImageService::class);
 
-            Storage::disk($image->disk ?? 'public')->delete([$image->path, $thumbPath]);
+        foreach ($product->images as $image) {
+            $imageService->deleteForImage($image);
             $image->delete();
         }
 
@@ -173,15 +173,9 @@ class ProductController extends Controller
         // Importamos el modelo
         $image = Image::findOrFail($imageId);
 
-        // 1. Reconstruimos la ruta de la miniatura basándonos en tu columna 'path'
-        $directory = dirname($image->path);
-        $filename = basename($image->path);
-        $thumbPath = $directory.'/thumb_'.$filename;
+        // Elimina las 3 renditions (full + md_ + thumb_) del disco
+        app(ProductImageService::class)->deleteForImage($image);
 
-        // 2. Eliminamos los archivos del disco (usando el disco que guardaste en BD)
-        Storage::disk($image->disk ?? 'public')->delete([$image->path, $thumbPath]);
-
-        // 3. Eliminamos el registro de la base de datos
         $image->delete();
 
         return back()->with('success', 'Imagen eliminada correctamente.');

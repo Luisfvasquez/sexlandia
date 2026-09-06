@@ -1,19 +1,17 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-white border-b border-wine/10">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    @if(Auth::user()->hasRole('admin'))
-                        <a href="{{ route('dashboard') }}">
-                            <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                        </a>
-                    @else
-                        <a href="{{ route('client.dashboard') }}">
-                            <x-application-logo class="block h-9 w-auto fill-current text-blue-600" />
-                        </a>
-                    @endif
+                    <a href="{{ Auth::user()->hasRole('admin') ? route('dashboard') : route('client.dashboard') }}"
+                        class="brand-logo" aria-label="{{ config('site.brand.name', 'SEXLANDIA') }}">
+                        <span class="brand-logo__badge" aria-hidden="true">SL</span>
+                        <span class="brand-logo__text">
+                            <span class="brand-logo__sex">SEX</span><span class="brand-logo__landia">Landia</span>
+                        </span>
+                    </a>
                 </div>
 
                 <!-- Navigation Links -->

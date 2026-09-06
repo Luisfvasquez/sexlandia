@@ -93,8 +93,8 @@
                                                 // Obtenemos la primera imagen del producto
                                                 $firstImage = $product->images->first();
                                             @endphp
-                                            <img src="{{ asset('storage/' . $firstImage->path) }}"
-                                                alt="{{ $product->name }}" class="w-10 h-10 object-cover rounded-md">
+                                            <img src="{{ $firstImage->thumb_url }}" loading="lazy"
+                                                alt="{{ $firstImage->alt_text ?: $product->name }}" class="w-10 h-10 object-cover rounded-md">
                                         @else
                                             {{-- Placeholder si no tiene imagen --}}
                                             <div class="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center">
@@ -122,8 +122,11 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
-                                    Bs.{{ number_format($product->display_price, 2, ',', '.') }}
+                                    ${{ number_format($product->display_price, 2, ',', '.') }}
                                     <span class="text-xs font-normal text-gray-500">{{ $product->unit_label }}</span>
+                                    @if ($exchangeRate)
+                                        <span class="block text-xs font-normal text-indigo-600">Bs. {{ number_format($product->display_price_bs, 2, ',', '.') }}</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $product->inventory->stock ?? 0 }} Unid.</div>
@@ -248,7 +251,7 @@
                                                                 <div>
                                                                     <label
                                                                         class="block text-sm font-medium text-gray-700">Costo
-                                                                        (Bs.)
+                                                                        (USD)
                                                                         <span x-show="unitType === 'gram'"
                                                                             class="text-xs text-indigo-600 font-bold">/Kg</span>
                                                                         <span x-show="unitType === 'unit'"
@@ -264,7 +267,7 @@
                                                                 <div>
                                                                     <label
                                                                         class="block text-sm font-medium text-gray-700">Precio
-                                                                        (Bs.)
+                                                                        (USD)
                                                                         <span x-show="unitType === 'gram'"
                                                                             class="text-xs text-indigo-600 font-bold">/Kg</span>
                                                                         <span x-show="unitType === 'unit'"
@@ -332,9 +335,9 @@
                                                                     @foreach ($product->images as $img)
                                                                         <div
                                                                             class="relative group border rounded-lg overflow-hidden bg-white shadow-sm flex flex-col items-center p-2">
-                                                                            <img src="{{ asset('storage/' . dirname($img->path) . '/thumb_' . basename($img->path)) }}"
+                                                                            <img src="{{ $img->thumb_url }}" loading="lazy"
                                                                                 class="h-24 w-full object-cover rounded-md"
-                                                                                alt="Miniatura">
+                                                                                alt="{{ $img->alt_text ?: 'Miniatura' }}">
 
                                                                             <button type="button"
                                                                                 onclick="if(confirm('¿Eliminar esta imagen de la base de datos?')) { document.getElementById('delete-img-{{ $img->id }}').submit(); }"

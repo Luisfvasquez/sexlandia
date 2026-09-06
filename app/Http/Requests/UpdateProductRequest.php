@@ -42,7 +42,25 @@ class UpdateProductRequest extends FormRequest
             'description' => ['nullable', 'string', 'regex:/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.\,\;\:\-\/\(\)\¿\?\¡\!\@\#\%\&\=\+\'\"°\n\r]+$/'],
             'minimum_stock' => 'required|numeric|min:0',
             'status' => 'required|in:active,inactive',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'images' => ['nullable', 'array', 'max:6'],
+            'images.*' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,webp',
+                'max:8192',
+                'dimensions:min_width=400,min_height=400,max_width=6000,max_height=6000',
+            ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'images.max' => 'Puedes subir un máximo de 6 imágenes por producto.',
+            'images.*.image' => 'El archivo :position no es una imagen válida.',
+            'images.*.mimes' => 'Las imágenes deben ser JPG, PNG o WEBP.',
+            'images.*.max' => 'Cada imagen no puede superar los 8 MB (se optimizan automáticamente).',
+            'images.*.dimensions' => 'Cada imagen debe medir entre 400px y 6000px por lado.',
         ];
     }
 }

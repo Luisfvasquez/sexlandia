@@ -86,7 +86,7 @@
                                         @endphp
                                         @if ($hasDebt)
                                             <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"
-                                                title="Cliente con saldo deudor de Bs./$ {{ number_format($pendingDebt, 2, ',', '.') }}"></span>
+                                                title="Cliente con saldo deudor de ${{ number_format($pendingDebt, 2, ',', '.') }}"></span>
                                         @else
                                             <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-500"
                                                 title="Al día / Sin deudas"></span>
@@ -271,7 +271,7 @@
                                         Este cliente tiene deudas activas por cobrar en el sistema.
                                     </p>
                                     <div class="text-lg font-black text-red-600 tracking-tight">
-                                        Bs. / $ <span x-text="selected.total_debt"></span>
+                                        $ <span x-text="selected.total_debt"></span>
                                     </div>
                                     <div class="pt-1.5">
                                         <a :href="'/admin/clients/' + selected.id"

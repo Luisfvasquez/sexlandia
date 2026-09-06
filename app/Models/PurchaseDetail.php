@@ -29,20 +29,23 @@ class PurchaseDetail extends Model implements Auditable
         return [
             'quantity' => 'decimal:2',
             'base_quantity' => 'decimal:2',
-            'unit_cost' => 'decimal:2',
+            'unit_cost' => 'decimal:4',
             'subtotal' => 'decimal:2',
-            'previous_cost' => 'decimal:2',
-            'new_cost' => 'decimal:2',
+            'previous_cost' => 'decimal:4',
+            'new_cost' => 'decimal:4',
         ];
     }
 
-    public function getUnitCostUsdAttribute()
+    /**
+     * Costo unitario (almacenado en USD) convertido a bolívares con la tasa
+     * congelada en la compra.
+     */
+    public function getUnitCostBsAttribute()
     {
-        // Accedemos a la tasa de cambio guardada en la compra principal
         $rate = $this->purchase->exchange_rate;
 
         if ($rate && $rate > 0) {
-            return round($this->unit_cost / $rate, 2);
+            return round($this->unit_cost * $rate, 2);
         }
 
         return 0;

@@ -49,25 +49,25 @@ class Product extends Model implements Auditable
     // Atributos adicionales para mostrar en vistas
     protected $appends = [
         'display_price',
+        'display_price_bs',
         'unit_label',
     ];
 
-    public function getTotalUsdAttribute()
+    /**
+     * Precio "display" (USD) convertido a bolívares con la tasa activa.
+     * Los precios se almacenan en USD; el monto en Bs es siempre USD * tasa.
+     */
+    public function getDisplayPriceBsAttribute(): float
     {
-        if ($this->exchange_rate && $this->exchange_rate > 0) {
-            return round($this->total / $this->exchange_rate, 2);
-        }
-
-        return 0;
+        return app(\App\Services\CurrencyService::class)->toBs($this->display_price);
     }
 
-    public function getSubtotalUsdAttribute()
+    /**
+     * Costo "display" (USD) convertido a bolívares con la tasa activa.
+     */
+    public function getDisplayCostBsAttribute(): float
     {
-        if ($this->exchange_rate && $this->exchange_rate > 0) {
-            return round($this->subtotal / $this->exchange_rate, 2);
-        }
-
-        return 0;
+        return app(\App\Services\CurrencyService::class)->toBs($this->display_cost);
     }
 
     /**

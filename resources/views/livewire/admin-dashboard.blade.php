@@ -11,7 +11,7 @@
             <div class="flex items-start justify-between relative z-10">
                 <div>
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Ventas del Mes</p>
-                    <p class="text-2xl font-extrabold text-gray-800 mt-1">Bs {{ number_format($monthlyRevenue, 2) }}</p>
+                    <p class="text-2xl font-extrabold text-gray-800 mt-1">$ {{ number_format($monthlyRevenue, 2) }}</p>
                     <div class="flex items-center gap-1 mt-2">
                         @if ($revenueChange >= 0)
                             <span
@@ -187,7 +187,7 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="text-sm font-bold text-gray-800">Bs {{ number_format($order->total, 2) }}</p>
+                                <p class="text-sm font-bold text-gray-800">$ {{ number_format($order->total, 2) }}</p>
                                 @php
                                     $statusColors = [
                                         'completed' => 'bg-emerald-100 text-emerald-700',
@@ -236,7 +236,7 @@
                 </div>
                 <div class="flex items-end justify-between">
                     <div>
-                        <p class="text-2xl font-extrabold text-gray-800">Bs {{ number_format($pendingReceivables, 2) }}
+                        <p class="text-2xl font-extrabold text-gray-800">$ {{ number_format($pendingReceivables, 2) }}
                         </p>
                         <p class="text-xs text-gray-400 mt-1">{{ $totalReceivablesCount }}
                             {{ $totalReceivablesCount == 1 ? 'cuenta pendiente' : 'cuentas pendientes' }}</p>
@@ -317,7 +317,7 @@
                     </div>
                     <h3 class="text-sm font-bold uppercase tracking-wider opacity-90">Compras del Mes</h3>
                 </div>
-                <p class="text-2xl font-extrabold">Bs {{ number_format($monthlyPurchases, 2) }}</p>
+                <p class="text-2xl font-extrabold">$ {{ number_format($monthlyPurchases, 2) }}</p>
                 <p class="text-xs opacity-60 mt-1">Total invertido en compras este mes</p>
             </div>
         </div>

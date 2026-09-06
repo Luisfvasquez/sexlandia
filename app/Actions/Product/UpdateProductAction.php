@@ -3,15 +3,14 @@
 namespace App\Actions\Product;
 
 use App\Models\Product;
+use App\Services\ProductImageService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Format;
-use Intervention\Image\ImageManager;
 
 class UpdateProductAction
 {
+    public function __construct(private ProductImageService $images) {}
+
     public function handle(Product $product, array $validated, $images = null): Product
     {
         return DB::transaction(function () use ($product, $validated, $images) {
@@ -43,31 +42,16 @@ class UpdateProductAction
             ]);
 
             if ($images) {
-                $manager = ImageManager::usingDriver(Driver::class);
                 $currentImagesCount = $product->images()->count();
 
                 foreach ($images as $index => $imageFile) {
-                    $filename = uniqid('img_').'.webp';
-                    $path = 'products/'.$product->id.'/'.$filename;
-                    $thumbPath = 'products/'.$product->id.'/thumb_'.$filename;
-
-                    $mainImage = $manager->decode($imageFile);
-                    $encodedMain = $mainImage->encodeUsingFormat(Format::WEBP, quality: 80);
-                    Storage::disk('public')->put($path, (string) $encodedMain);
-
-                    $thumbImage = $manager->decode($imageFile)->scale(width: 300);
-                    $encodedThumb = $thumbImage->encodeUsingFormat(Format::WEBP, quality: 80);
-                    Storage::disk('public')->put($thumbPath, (string) $encodedThumb);
-
-                    $product->images()->create([
-                        'path' => $path,
-                        'disk' => 'public',
-                        'original_name' => $imageFile->getClientOriginalName(),
-                        'mime_type' => 'image/webp',
-                        'size' => strlen((string) $encodedMain),
-                        'is_primary' => ($currentImagesCount == 0 && $index === 0) ? true : false,
-                        'sort_order' => $currentImagesCount + $index,
-                    ]);
+                    $this->images->attachToProduct(
+                        $product,
+                        $imageFile,
+                        sortOrder: $currentImagesCount + $index,
+                        isPrimary: $currentImagesCount === 0 && $index === 0,
+                        altText: $product->name,
+                    );
                 }
             }
 

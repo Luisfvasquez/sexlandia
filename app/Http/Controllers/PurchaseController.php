@@ -8,8 +8,8 @@ use App\Models\ExchangeRate;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -75,7 +75,7 @@ class PurchaseController extends Controller
                 'tax' => 0,
                 'discount' => 0,
                 'total' => 0,
-                'exchange_rate' => $currentRate->rate ?? Cache::get('usd_exchange_rate'), // Inmutabilidad histórica
+                'exchange_rate' => $currentRate->rate ?? app(CurrencyService::class)->rateOr(1), // Inmutabilidad histórica (Bs/USD)
                 'status' => 'completed',
                 'purchased_at' => $request->purchased_at,
                 'notes' => $request->notes,

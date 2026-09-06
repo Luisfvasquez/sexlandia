@@ -59,7 +59,7 @@
                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Cliente</th>
                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Estado</th>
                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Pago</th>
-                        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Total (Bs.)</th>
+                        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Total (USD)</th>
                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Acciones</th>
                     </tr>
                 </thead>
@@ -97,7 +97,10 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right font-black text-gray-900">
-                                Bs. {{ number_format($order->total, 2) }}
+                                $ {{ number_format($order->total, 2) }}
+                                @if ($order->exchange_rate)
+                                    <span class="block text-xs font-bold text-gray-400">Bs. {{ number_format($order->total * $order->exchange_rate, 2) }}</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-center whitespace-nowrap text-sm font-medium space-x-2">
                                 <a href="{{ route('admin.orders.show', $order->id) }}"
@@ -131,14 +134,18 @@
                                                         <span>{{ $detail->quantity }}x {{ $detail->product->name ?? 'N/A' }}
                                                             ({{ $detail->bulk?->name ?? 'Unidad' }})
                                                         </span>
-                                                        <span class="font-bold">Bs. {{ number_format($detail->subtotal, 2) }}</span>
+                                                        <span class="font-bold">$ {{ number_format($detail->subtotal, 2) }}</span>
                                                     </div>
                                                 @endforeach
                                             </div>
 
                                             <div class="flex justify-between text-xl font-black">
                                                 <span>Total:</span>
-                                                <span>Bs. {{ number_format($order->total, 2) }}</span>
+                                                <span>$ {{ number_format($order->total, 2) }}
+                                                    @if ($order->exchange_rate)
+                                                        <span class="block text-xs text-gray-400 text-right">Bs. {{ number_format($order->total * $order->exchange_rate, 2) }}</span>
+                                                    @endif
+                                                </span>
                                             </div>
 
                                             <button @click="openModal = false"

@@ -164,7 +164,7 @@
 
                             {{-- Costo Unitario --}}
                             <div class="md:col-span-2">
-                                <label class="block text-xs font-bold text-gray-500">Costo Unit. (Bs)</label>
+                                <label class="block text-xs font-bold text-gray-500">Costo Unit. (USD)</label>
                                 <input type="number" step="0.01" min="0" :name="`items[${index}][unit_cost]`"
                                     x-model="row.unit_cost" class="w-full mt-1 rounded-lg border-gray-300 text-sm"
                                     required inputmode="decimal"
@@ -177,7 +177,7 @@
                                 <label class="block text-xs font-bold text-gray-500">Subtotal</label>
                                 <div
                                     class="w-full mt-1 p-2 bg-gray-200 rounded-lg text-sm font-bold text-gray-700 text-right">
-                                    Bs. <span x-text="(row.quantity * row.unit_cost).toFixed(2)"></span>
+                                    $ <span x-text="(row.quantity * row.unit_cost).toFixed(2)"></span>
                                 </div>
                             </div>
 
@@ -202,13 +202,13 @@
             {{-- 3. Totales --}}
             <div class="flex justify-end">
                 <div class="bg-gray-800 text-white p-6 rounded-xl shadow-lg w-full md:w-1/3">
-                    <div class="flex justify-between mb-2">
-                        <span>Total Compra (Bs):</span>
-                        <span class="font-bold text-xl" x-text="calculateTotalBs()"></span>
-                    </div>
-                    <div class="flex justify-between text-green-400 border-t border-gray-600 pt-2 mt-2">
-                        <span>Total Equivalente ($):</span>
+                    <div class="flex justify-between mb-2 text-green-400">
+                        <span>Total Compra ($):</span>
                         <span class="font-bold text-xl" x-text="calculateTotalUsd()"></span>
+                    </div>
+                    <div class="flex justify-between border-t border-gray-600 pt-2 mt-2">
+                        <span>Total Equivalente (Bs):</span>
+                        <span class="font-bold text-xl" x-text="calculateTotalBs()"></span>
                     </div>
                     <button type="submit" x-bind:disabled="isSubmitting"
                         x-text="isSubmitting ? 'Procesando Compra...' : 'Procesar Ingreso a Inventario'"
@@ -317,15 +317,15 @@
                     }
                 },
 
-                calculateTotalBs() {
+                calculateTotalUsd() {
                     let total = this.rows.reduce((sum, row) => sum + (row.quantity * row.unit_cost), 0);
                     return total.toFixed(2);
                 },
 
-                calculateTotalUsd() {
-                    let totalBs = parseFloat(this.calculateTotalBs());
+                calculateTotalBs() {
+                    let totalUsd = parseFloat(this.calculateTotalUsd());
                     if (this.exchangeRate > 0) {
-                        return (totalBs / this.exchangeRate).toFixed(2);
+                        return (totalUsd * this.exchangeRate).toFixed(2);
                     }
                     return '0.00';
                 }

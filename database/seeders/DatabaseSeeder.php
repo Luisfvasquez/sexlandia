@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
         ]);
 
-        $user = User::create([
+        $user = User::firstOrCreate(['email' => 'wueyluis@gmail.com'], [
             'dni' => '29873955',
             'name' => 'Luis',
             'last_name' => 'Vasquez',
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
 
         $user->assignRole('admin');
 
-        $user = User::create([
+        $client = User::firstOrCreate(['email' => 'inventario@gmail.com'], [
             'dni' => '0',
             'name' => 'Venta sin cliente',
             'last_name' => 'sistema',
@@ -45,6 +45,12 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        $user->assignRole('client');
+        $client->assignRole('client');
+
+        $this->call([
+            ExchangeRateSeeder::class,
+            PaymentMethodSeeder::class,
+            ProductSeeder::class,
+        ]);
     }
 }

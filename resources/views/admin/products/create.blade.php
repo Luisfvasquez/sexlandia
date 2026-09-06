@@ -39,23 +39,121 @@
             {{-- Notificación si no hay tasa de cambio --}}
             @if (!$exchangeRate)
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-                    <p class="text-red-700"><strong>¡Atención!</strong> No hay una tasa de cambio activa. Los cálculos en
-                        USD no se mostrarán correctamente.</p>
+                    <p class="text-red-700"><strong>¡Atención!</strong> No hay una tasa de cambio activa. El equivalente en
+                        Bs no se mostrará correctamente.</p>
                 </div>
             @endif
 
             {{-- Sección: Imágenes del Producto --}}
-            <div class="bg-white p-6 rounded-xl shadow">
+            <div class="bg-white p-6 rounded-xl shadow" x-data="imageUploader()">
                 <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Imágenes del Producto</h2>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Subir Imágenes (Formatos: JPG, PNG,
-                        WEBP)</label>
-                    <input type="file" name="images[]" multiple accept="image/*"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Subir Imágenes (JPG, PNG o WEBP)</label>
+                    <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp"
+                        x-ref="fileInput" @change="handleFiles($event)"
                         class="w-full rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500">
-                    <p class="text-xs text-gray-500 mt-1">Puedes seleccionar varias imágenes. Se optimizarán a formato WebP.
-                        La primera será la principal.</p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Hasta 6 imágenes · máx 8&nbsp;MB c/u · mínimo 400&times;400&nbsp;px.
+                        Se convierten a <strong>WebP</strong> y se generan 3 tamaños (detalle, catálogo, miniatura).
+                        La primera es la principal.
+                    </p>
+
+                    {{-- Errores de validación de cliente --}}
+                    <template x-if="errors.length">
+                        <ul class="mt-2 text-xs text-red-600 list-disc list-inside space-y-0.5">
+                            <template x-for="err in errors" :key="err"><li x-text="err"></li></template>
+                        </ul>
+                    </template>
+
+                    {{-- Previsualización de miniaturas --}}
+                    <div class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3" x-show="previews.length" x-cloak>
+                        <template x-for="(p, i) in previews" :key="p.id">
+                            <div class="relative group border rounded-lg overflow-hidden bg-gray-50">
+                                <img :src="p.url" class="h-24 w-full object-cover" :alt="p.name">
+                                <span x-show="i === 0"
+                                    class="absolute top-1 left-1 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">PRINCIPAL</span>
+                                <button type="button" @click="removeAt(i)"
+                                    class="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
+                                <span class="block text-[10px] text-gray-500 truncate px-1 py-0.5" x-text="p.size"></span>
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </div>
+
+            <script>
+                function imageUploader() {
+                        return {
+                            previews: [],
+                            errors: [],
+                            _files: [],
+                            MAX: 6,
+                            MAX_BYTES: 8 * 1024 * 1024,
+                            MIN_PX: 400,
+
+                            handleFiles(e) {
+                                this.errors = [];
+                                const incoming = Array.from(e.target.files || []);
+                                const accepted = [];
+
+                                for (const file of incoming) {
+                                    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                                        this.errors.push(`${file.name}: formato no permitido.`);
+                                        continue;
+                                    }
+                                    if (file.size > this.MAX_BYTES) {
+                                        this.errors.push(`${file.name}: supera los 8 MB.`);
+                                        continue;
+                                    }
+                                    accepted.push(file);
+                                }
+
+                                let all = this._files.concat(accepted);
+                                if (all.length > this.MAX) {
+                                    this.errors.push(`Máximo ${this.MAX} imágenes; se recortó la selección.`);
+                                    all = all.slice(0, this.MAX);
+                                }
+                                this._files = all;
+                                this.syncInput();
+                                this.buildPreviews();
+                            },
+
+                            buildPreviews() {
+                                this.previews.forEach(p => URL.revokeObjectURL(p.url));
+                                this.previews = this._files.map((f, i) => ({
+                                    id: f.name + f.size + i,
+                                    name: f.name,
+                                    url: URL.createObjectURL(f),
+                                    size: (f.size / 1024).toFixed(0) + ' KB',
+                                }));
+                                this._files.forEach((f, i) => this.checkDimensions(f, i));
+                            },
+
+                            checkDimensions(file, i) {
+                                const img = new Image();
+                                img.onload = () => {
+                                    if (img.naturalWidth < this.MIN_PX || img.naturalHeight < this.MIN_PX) {
+                                        this.errors.push(`${file.name}: muy pequeña (${img.naturalWidth}×${img.naturalHeight}, mínimo ${this.MIN_PX}px).`);
+                                        this.removeAt(i);
+                                    }
+                                };
+                                img.src = this.previews[i]?.url;
+                            },
+
+                            removeAt(i) {
+                                this._files.splice(i, 1);
+                                this.syncInput();
+                                this.buildPreviews();
+                            },
+
+                            syncInput() {
+                                const dt = new DataTransfer();
+                                this._files.forEach(f => dt.items.add(f));
+                                this.$refs.fileInput.files = dt.files;
+                            },
+                        };
+                    }
+                </script>
 
             {{-- Sección: Información General --}}
             <div class="bg-white p-6 rounded-xl shadow">
@@ -126,11 +224,10 @@
                 </div>
             </div>
 
-            {{-- Sección: Costos en Bs con conversión a USD --}}
-            {{-- Sección: Costos en Bs con conversión a USD y Lógica de Pesables --}}
+            {{-- Sección: Costos en USD con conversión a Bs y Lógica de Pesables --}}
             <div class="bg-white p-6 rounded-xl shadow">
                 <div class="flex justify-between items-center mb-4 border-b pb-2">
-                    <h2 class="text-xl font-semibold text-gray-700">Configuración Base (Bs)</h2>
+                    <h2 class="text-xl font-semibold text-gray-700">Configuración Base (USD)</h2>
                     <span class="bg-gray-800 text-white text-xs px-2 py-1 rounded">Tasa Actual: Bs. <span
                             x-text="rate"></span></span>
                 </div>
@@ -152,7 +249,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Costo Compra <span x-text="measureType === 'gram' ? 'por KILO' : 'por UNIDAD'"
-                                class="font-bold text-indigo-600"></span> (Bs)
+                                class="font-bold text-indigo-600"></span> (USD)
                         </label>
                         <div class="relative">
                             <input type="number" step="0.01" min="0" x-model="displayCost" @blur="calculatePrice" required
@@ -160,8 +257,8 @@
                                 inputmode="decimal"
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                 title="Solo números positivos">
-                            <span class="absolute right-3 top-2.5 text-gray-500 text-sm font-bold">($<span
-                                    x-text="getUsd(displayCost)"></span>)</span>
+                            <span class="absolute right-3 top-2.5 text-gray-500 text-sm font-bold">(Bs <span
+                                    x-text="getBs(displayCost)"></span>)</span>
                         </div>
                     </div>
 
@@ -169,7 +266,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Precio Venta <span x-text="measureType === 'gram' ? 'por KILO' : 'por UNIDAD'"
-                                class="font-bold text-indigo-600"></span>
+                                class="font-bold text-indigo-600"></span> (USD)
                             <span class="text-xs text-green-600 font-bold ml-2">+30% Auto</span>
                         </label>
                         <div class="relative">
@@ -178,8 +275,8 @@
                                 inputmode="decimal"
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                 title="Solo números positivos">
-                            <span class="absolute right-3 top-2.5 text-green-700 text-sm font-bold">($<span
-                                    x-text="getUsd(displayPrice)"></span>)</span>
+                            <span class="absolute right-3 top-2.5 text-green-700 text-sm font-bold">(Bs <span
+                                    x-text="getBs(displayPrice)"></span>)</span>
                         </div>
                     </div>
 
@@ -245,7 +342,7 @@
 
                                 {{-- Costos y Precios con conversión dinámica a USD --}}
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Costo (Bs)</label>
+                                    <label class="block text-xs font-bold text-gray-500">Costo (USD)</label>
                                     <div class="relative">
                                         <input type="number" step="0.01" min="0"
                                             :name="`presentations[${index}][purchase_price]`" x-model="item.purchase_price"
@@ -254,12 +351,12 @@
                                             inputmode="decimal"
                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                             title="Solo números positivos">
-                                        <span class="absolute right-2 top-2.5 text-xs text-gray-500 font-bold">($<span
-                                                x-text="getUsd(item.purchase_price)"></span>)</span>
+                                        <span class="absolute right-2 top-2.5 text-xs text-gray-500 font-bold">(Bs <span
+                                                x-text="getBs(item.purchase_price)"></span>)</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Venta (Bs)</label>
+                                    <label class="block text-xs font-bold text-gray-500">Venta (USD)</label>
                                     <div class="relative">
                                         <input type="number" step="0.01" min="0" :name="`presentations[${index}][sale_price]`"
                                             x-model="item.sale_price"
@@ -268,8 +365,8 @@
                                             inputmode="decimal"
                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                             title="Solo números positivos">
-                                        <span class="absolute right-2 top-2.5 text-xs text-green-700 font-bold">($<span
-                                                x-text="getUsd(item.sale_price)"></span>)</span>
+                                        <span class="absolute right-2 top-2.5 text-xs text-green-700 font-bold">(Bs <span
+                                                x-text="getBs(item.sale_price)"></span>)</span>
                                     </div>
                                 </div>
 
@@ -432,9 +529,9 @@
                             this.displayPrice = (parseFloat(this.displayCost) * 1.30).toFixed(2);
                         }
                     },
-                    getUsd(bsValue) {
-                        if (!bsValue || this.rate <= 0) return '0.00';
-                        return (parseFloat(bsValue) / this.rate).toFixed(2);
+                    getBs(usdValue) {
+                        if (!usdValue || this.rate <= 0) return '0.00';
+                        return (parseFloat(usdValue) * this.rate).toFixed(2);
                     },
                     addPresentation() {
                         this.presentations.push({

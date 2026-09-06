@@ -52,7 +52,14 @@ class StoreProductRequest extends FormRequest
             'presentations.*.sale_price' => 'required|numeric|min:0',
             'presentations.*.sku' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-\_]+$/'],
             'presentations.*.sku_barcode' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-]+$/'],
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'images' => ['nullable', 'array', 'max:6'],
+            'images.*' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,webp',
+                'max:8192',
+                'dimensions:min_width=400,min_height=400,max_width=6000,max_height=6000',
+            ],
         ];
     }
 
@@ -74,6 +81,11 @@ class StoreProductRequest extends FormRequest
             'presentations.*.sale_price.required' => 'El precio de venta de la presentación es requerido.',
             'presentations.*.sku.unique' => 'El SKU de la presentación ya existe en la base de datos.',
             'presentations.*.sku_barcode.unique' => 'El código de barras de la presentación ya existe en la base de datos.',
+            'images.max' => 'Puedes subir un máximo de 6 imágenes por producto.',
+            'images.*.image' => 'El archivo :position no es una imagen válida.',
+            'images.*.mimes' => 'Las imágenes deben ser JPG, PNG o WEBP.',
+            'images.*.max' => 'Cada imagen no puede superar los 8 MB (se optimizan automáticamente).',
+            'images.*.dimensions' => 'Cada imagen debe medir entre 400px y 6000px por lado.',
         ];
     }
 }

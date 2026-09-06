@@ -17,6 +17,13 @@ use App\Http\Controllers\UserRoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ClientPanelController::class, 'storefront'])->name('storefront');
+Route::get('/catalogo', [ClientPanelController::class, 'catalog'])->name('storefront.catalog');
+Route::get('/nosotros', [ClientPanelController::class, 'nosotros'])->name('nosotros');
+Route::get('/contacto', [ClientPanelController::class, 'contacto'])->name('contacto');
+Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
+
+// Compatibilidad: nombres antiguos del panel de cliente → nuevas ubicaciones.
+Route::get('/client/productos', fn () => redirect()->route('storefront.catalog', request()->query()))->name('client.products');
 
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
@@ -86,8 +93,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:client'])
     ->prefix('client')
     ->group(function () {
-        Route::get('/dashboard', [ClientPanelController::class, 'dashboard'])->name('client.dashboard');
-        Route::get('/productos', [ClientPanelController::class, 'products'])->name('client.products');
+        // Compatibilidad: el panel dedicado se fusionó con la portada.
+        Route::get('/dashboard', fn () => redirect()->route('storefront'))->name('client.dashboard');
         Route::post('/checkout', [ClientPanelController::class, 'checkout'])->name('client.checkout');
         Route::get('/checkout', [ClientPanelController::class, 'checkoutView'])->name('client.checkout.view');
         Route::get('/compras', [ClientPanelController::class, 'purchases'])->name('client.purchases');

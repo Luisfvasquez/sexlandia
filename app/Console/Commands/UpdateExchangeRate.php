@@ -49,6 +49,9 @@ class UpdateExchangeRate extends Command
 
                         // 3. Guardar en Caché permanentemente (hasta que este comando lo vuelva a sobreescribir)
                         Cache::forever('exchange_rate', $newRate->rate);
+
+                        // 4. Invalidar la tasa memorizada en el proceso actual (workers, colas)
+                        app(\App\Services\CurrencyService::class)->forget();
                     });
 
                     $this->info("¡Éxito! Tasa actualizada y en caché: {$rate} Bs/USD");

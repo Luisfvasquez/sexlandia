@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\ProductImageService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -15,35 +16,29 @@ use Illuminate\Support\Str;
 class ProductSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Catálogo demo de SEXLANDIA (sex shop) con imágenes optimizadas.
      */
     public function run(): void
     {
-        // Safe truncate existing tables to avoid duplicate key violations
         Schema::disableForeignKeyConstraints();
         Product::truncate();
         Inventory::truncate();
         Bulk::truncate();
         Schema::enableForeignKeyConstraints();
 
-        // Fetch all categories
         $categories = Category::all();
         if ($categories->isEmpty()) {
             $this->call(CategorySeeder::class);
             $categories = Category::all();
         }
 
-        // Fetch all bulk types
         $bulkTypes = BulkType::all();
         if ($bulkTypes->isEmpty()) {
             $this->call(BulkTypeSeeder::class);
             $bulkTypes = BulkType::all();
         }
-
-        // Map bulk types by slug for easy retrieval
         $bulkTypesMap = $bulkTypes->pluck('id', 'slug')->toArray();
 
-        // Get a default admin user to assign as creator
         $creator = User::first() ?? User::create([
             'dni' => '29873955',
             'name' => 'Luis',
@@ -54,111 +49,90 @@ class ProductSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // A rich bank of realistic products grouped by category slug
+        // Bank de productos por slug de categoría (precios en USD; se almacenan tal cual)
         $productBank = [
-            'bebidas' => [
-                ['name' => 'Refresco Coca-Cola 1.5L', 'brand' => 'Coca-Cola', 'unit_type' => 'unit', 'cost' => 1.20 * 540, 'price' => 1.80 * 540],
-                ['name' => 'Refresco Pepsi 2L', 'brand' => 'Pepsi', 'unit_type' => 'unit', 'cost' => 1.40 * 540, 'price' => 2.10 * 540],
-                ['name' => 'Agua Mineral Minalba 5L', 'brand' => 'Minalba', 'unit_type' => 'unit', 'cost' => 2.00 * 540, 'price' => 3.00 * 540],
-                ['name' => 'Jugo de Naranja Yukery 1L', 'brand' => 'Yukery', 'unit_type' => 'unit', 'cost' => 1.50 * 540, 'price' => 2.25 * 540],
-                ['name' => 'Té Frío Lipton Limón 500ml', 'brand' => 'Lipton', 'unit_type' => 'unit', 'cost' => 0.80 * 540, 'price' => 1.20 * 540],
-                ['name' => 'Malta Polar 355ml', 'brand' => 'Polar', 'unit_type' => 'unit', 'cost' => 0.60 * 540, 'price' => 0.95 * 540],
-                ['name' => 'Jugo de Manzana Yukery 250ml', 'brand' => 'Yukery', 'unit_type' => 'unit', 'cost' => 0.45 * 540, 'price' => 0.70 * 540],
-                ['name' => 'Soda Schweppes Tónica 355ml', 'brand' => 'Schweppes', 'unit_type' => 'unit', 'cost' => 0.90 * 540, 'price' => 1.40 * 540],
+            'succionadores' => [
+                ['name' => 'Satisfyer Pro 2 Generación 3', 'brand' => 'Satisfyer', 'cost' => 28, 'price' => 45, 'desc' => 'Succionador de clítoris con tecnología Liquid Air, 11 intensidades y cabezal de silicona médica. Sumergible IPX7 y recargable por imán.'],
+                ['name' => 'Satisfyer Penguin Next Generation', 'brand' => 'Satisfyer', 'cost' => 26, 'price' => 42, 'desc' => 'Diseño ergonómico tipo pingüino con ondas de presión sin contacto. 11 programas, silencioso y a prueba de agua.'],
+                ['name' => 'Satisfyer Orca Succionador', 'brand' => 'Satisfyer', 'cost' => 30, 'price' => 49, 'desc' => 'Succionador premium con silueta envolvente, boquilla suave y control intuitivo de intensidad.'],
+                ['name' => 'Womanizer Starlet 3', 'brand' => 'Womanizer', 'cost' => 40, 'price' => 65, 'desc' => 'Tecnología Pleasure Air con 4 niveles de intensidad. Compacto, discreto y perfecto para iniciarse.'],
+                ['name' => 'Satisfyer Curvy 1+ con App', 'brand' => 'Satisfyer', 'cost' => 34, 'price' => 55, 'desc' => 'Succionador con conexión Bluetooth y control desde la app Satisfyer Connect. Cabezal flexible ajustable.'],
+                ['name' => 'Succionador Rosa Recargable', 'brand' => 'SEXLANDIA', 'cost' => 14, 'price' => 25, 'desc' => 'Modelo compacto de silicona suave con 10 modos de succión. Carga USB y bolsa de viaje incluida.'],
             ],
-            'alimentos' => [
-                ['name' => 'Harina de Maíz Precocida Harina P.A.N. 1kg', 'brand' => 'P.A.N.', 'unit_type' => 'unit', 'cost' => 0.95 * 540, 'price' => 1.35 * 540],
-                ['name' => 'Arroz Blanco Primor Clasico 1kg', 'brand' => 'Primor', 'unit_type' => 'unit', 'cost' => 1.10 * 540, 'price' => 1.60 * 540],
-                ['name' => 'Pasta Spaguetti Primor 1kg', 'brand' => 'Primor', 'unit_type' => 'unit', 'cost' => 1.20 * 540, 'price' => 1.75 * 540],
-                ['name' => 'Aceite Vegetal Vatel 1L', 'brand' => 'Vatel', 'unit_type' => 'unit', 'cost' => 2.20 * 540, 'price' => 3.20 * 540],
-                ['name' => 'Azúcar Refinada Montalbán 1kg', 'brand' => 'Montalbán', 'unit_type' => 'unit', 'cost' => 0.90 * 540, 'price' => 1.30 * 540],
-                ['name' => 'Sal Común de Mesa Refinada 500g', 'brand' => 'La Fina', 'unit_type' => 'unit', 'cost' => 0.40 * 540, 'price' => 0.60 * 540],
-                ['name' => 'Salsa de Tomate Pampero 397g', 'brand' => 'Pampero', 'unit_type' => 'unit', 'cost' => 0.85 * 540, 'price' => 1.25 * 540],
-                ['name' => 'Mayonesa Kraft Real 445g', 'brand' => 'Kraft', 'unit_type' => 'unit', 'cost' => 2.10 * 540, 'price' => 2.99 * 540],
-                ['name' => 'Lentejas Importadas Seleccionadas 500g', 'brand' => 'Granos del Norte', 'unit_type' => 'unit', 'cost' => 0.75 * 540, 'price' => 1.15 * 540],
-                ['name' => 'Caraotas Negras Seleccionadas 500g', 'brand' => 'Granos del Norte', 'unit_type' => 'unit', 'cost' => 0.80 * 540, 'price' => 1.20 * 540],
+            'vibradores' => [
+                ['name' => 'Satisfyer Heat Flex 4 Rabbit', 'brand' => 'Satisfyer', 'cost' => 33, 'price' => 52, 'desc' => 'Vibrador conejo flexible con función de calor a 40°C y doble motor para punto G y clítoris. App Connect.'],
+                ['name' => 'Xmoment X-Puff Dual', 'brand' => 'Xmoment', 'cost' => 22, 'price' => 36, 'desc' => 'Estimulador dual: succión clitorial + vibración interna para punto G. Silicona líquida y 7 patrones.'],
+                ['name' => 'Satisfyer Shiny Petal Wearable', 'brand' => 'Satisfyer', 'cost' => 28, 'price' => 46, 'desc' => 'Vibrador ergonómico de uso ponible con control por app a distancia. Discreto y silencioso.'],
+                ['name' => 'Vibrador Bala Recargable', 'brand' => 'SEXLANDIA', 'cost' => 8, 'price' => 16, 'desc' => 'Bala vibradora potente y silenciosa con 10 funciones. Ideal para estimulación puntual y juego en pareja.'],
+                ['name' => 'Conejo Clásico Multivelocidad', 'brand' => 'CalExotics', 'cost' => 19, 'price' => 32, 'desc' => 'Vibrador conejo con rotación de perlas, orejas estimuladoras y varios niveles de vibración.'],
+                ['name' => 'Vibrador Varita Mágica Recargable', 'brand' => 'SEXLANDIA', 'cost' => 24, 'price' => 39, 'desc' => 'Cabezal grande y flexible, vibración profunda de grado wand. 20 modos y carga rápida USB.'],
             ],
-            'limpieza' => [
-                ['name' => 'Jabón en Polvo Las Llaves 1kg', 'brand' => 'Las Llaves', 'unit_type' => 'unit', 'cost' => 2.40 * 540, 'price' => 3.50 * 540],
-                ['name' => 'Jabón Líquido Lavaplatos Axion 500ml', 'brand' => 'Axion', 'unit_type' => 'unit', 'cost' => 1.50 * 540, 'price' => 2.20 * 540],
-                ['name' => 'Cloro Líquido Tradicional Nevex 1L', 'brand' => 'Nevex', 'unit_type' => 'unit', 'cost' => 0.90 * 540, 'price' => 1.40 * 540],
-                ['name' => 'Desinfectante Floral Poett 1L', 'brand' => 'Poett', 'unit_type' => 'unit', 'cost' => 1.30 * 540, 'price' => 1.95 * 540],
-                ['name' => 'Esponja Multiuso Scotch-Brite 2 Und', 'brand' => '3M', 'unit_type' => 'unit', 'cost' => 0.70 * 540, 'price' => 1.10 * 540],
-                ['name' => 'Suavizante Downy Concentrado 800ml', 'brand' => 'Downy', 'unit_type' => 'unit', 'cost' => 3.50 * 540, 'price' => 4.99 * 540],
-                ['name' => 'Detergente Líquido Ariel Concentrado 1L', 'brand' => 'Ariel', 'unit_type' => 'unit', 'cost' => 4.20 * 540, 'price' => 5.99 * 540],
-                ['name' => 'Limpiador Multiuso Cif Crema 500ml', 'brand' => 'Cif', 'unit_type' => 'unit', 'cost' => 1.80 * 540, 'price' => 2.60 * 540],
+            'lubricantes' => [
+                ['name' => 'ID Glide Lubricante Base Agua 130ml', 'brand' => 'ID Lubricants', 'cost' => 7, 'price' => 13, 'desc' => 'Lubricante premium base agua, textura sedosa de larga duración. Compatible con juguetes y preservativos.'],
+                ['name' => 'ID Millennium Base Silicona 65ml', 'brand' => 'ID Lubricants', 'cost' => 9, 'price' => 17, 'desc' => 'Lubricante base silicona ultra resbaladizo y a prueba de agua. Una gota rinde muchísimo.'],
+                ['name' => 'Trío ID Lubricantes Travel Pack', 'brand' => 'ID Lubricants', 'cost' => 12, 'price' => 22, 'desc' => 'Set de 3 lubricantes de viaje: sensación, calor y clásico base agua. Perfecto para probar.'],
+                ['name' => 'Pjur Original Base Silicona 100ml', 'brand' => 'Pjur', 'cost' => 15, 'price' => 26, 'desc' => 'Lubricante alemán de silicona con dimeticona, sin sabor ni olor. Muy duradero.'],
+                ['name' => 'Lubricante Efecto Calor 100ml', 'brand' => 'SEXLANDIA', 'cost' => 6, 'price' => 12, 'desc' => 'Base agua con efecto calor suave que se intensifica con el movimiento y el aliento.'],
+                ['name' => 'Gel Potenciador Sensación 30ml', 'brand' => 'SEXLANDIA', 'cost' => 8, 'price' => 15, 'desc' => 'Gel estimulante de aplicación tópica para aumentar la sensibilidad y el flujo sanguíneo.'],
             ],
-            'lacteos' => [
-                ['name' => 'Leche Líquida Completa Campestre 1L', 'brand' => 'Campestre', 'unit_type' => 'unit', 'cost' => 1.30 * 540, 'price' => 1.85 * 540],
-                ['name' => 'Leche en Polvo Completa La Campiña 900g', 'brand' => 'La Campiña', 'unit_type' => 'unit', 'cost' => 6.50 * 540, 'price' => 8.99 * 540],
-                ['name' => 'Mantequilla con Sal Mavesa 500g', 'brand' => 'Mavesa', 'unit_type' => 'unit', 'cost' => 1.80 * 540, 'price' => 2.50 * 540],
-                ['name' => 'Queso Blanco Duro Llanero (por g)', 'brand' => 'Lácteos Llaneros', 'unit_type' => 'gram', 'cost' => 0.0035 * 540, 'price' => 0.0055 * 540], // Gram scale pricing ($3.50 cost, $5.50 retail per Kg)
-                ['name' => 'Queso Amarillo Rebanado Torondoy (por g)', 'brand' => 'Torondoy', 'unit_type' => 'gram', 'cost' => 0.0060 * 540, 'price' => 0.0090 * 540], // Gram scale pricing ($6.00 cost, $9.00 retail per Kg)
-                ['name' => 'Yogurt Natural Mi Vaca 150g', 'brand' => 'Mi Vaca', 'unit_type' => 'unit', 'cost' => 0.70 * 540, 'price' => 1.05 * 540],
-                ['name' => 'Crema de Leche Campestre 200g', 'brand' => 'Campestre', 'unit_type' => 'unit', 'cost' => 1.10 * 540, 'price' => 1.65 * 540],
-                ['name' => 'Queso Crema Philadelphia 220g', 'brand' => 'Philadelphia', 'unit_type' => 'unit', 'cost' => 2.80 * 540, 'price' => 3.99 * 540],
+            'juegos-y-parejas' => [
+                ['name' => 'CalExotics Furry Cuffs Esposas de Peluche', 'brand' => 'CalExotics', 'cost' => 10, 'price' => 18, 'desc' => 'Esposas ultrasuaves forradas en peluche con cierre metálico y llave. Cómodas para juego de rol.'],
+                ['name' => 'Anillo Vibrador para Pareja', 'brand' => 'SEXLANDIA', 'cost' => 7, 'price' => 14, 'desc' => 'Anillo de silicona elástica con bala vibradora recargable. Prolonga la erección y estimula a ambos.'],
+                ['name' => 'Satisfyer Double Joy con App', 'brand' => 'Satisfyer', 'cost' => 32, 'price' => 52, 'desc' => 'Vibrador para parejas de uso simultáneo durante la penetración. Doble motor y control por app.'],
+                ['name' => 'Kit BDSM Iniciación 7 Piezas', 'brand' => 'SEXLANDIA', 'cost' => 18, 'price' => 32, 'desc' => 'Antifaz, esposas, cuerda, látigo, pinzas y plumas en un estuche. Para explorar en confianza.'],
+                ['name' => 'Dado del Amor y Cartas Picantes', 'brand' => 'SEXLANDIA', 'cost' => 4, 'price' => 9, 'desc' => 'Juego de mesa para parejas con retos y posiciones. Rompe la rutina con humor.'],
+                ['name' => 'Huevo Vibrador con Control Remoto', 'brand' => 'CalExotics', 'cost' => 16, 'price' => 28, 'desc' => 'Huevo de silicona con mando inalámbrico de largo alcance. Perfecto para juego discreto fuera de casa.'],
             ],
-            'snacks' => [
-                ['name' => 'Papas Fritas Ruffles Originales 120g', 'brand' => 'Frito-Lay', 'unit_type' => 'unit', 'cost' => 1.10 * 540, 'price' => 1.65 * 540],
-                ['name' => 'Doritos Queso Mega 150g', 'brand' => 'Frito-Lay', 'unit_type' => 'unit', 'cost' => 1.20 * 540, 'price' => 1.80 * 540],
-                ['name' => 'Galletas Oreo Chocolate 108g', 'brand' => 'Nabisco', 'unit_type' => 'unit', 'cost' => 0.65 * 540, 'price' => 0.99 * 540],
-                ['name' => 'Chocolate con Leche Savoy 80g', 'brand' => 'Nestlé', 'unit_type' => 'unit', 'cost' => 0.90 * 540, 'price' => 1.40 * 540],
-                ['name' => 'Galletas Club Social Original 9 Und', 'brand' => 'Nabisco', 'unit_type' => 'unit', 'cost' => 1.60 * 540, 'price' => 2.30 * 540],
-                ['name' => 'Pepitonas Salsa Picante Margarita 140g', 'brand' => 'Margarita', 'unit_type' => 'unit', 'cost' => 1.30 * 540, 'price' => 1.95 * 540],
-                ['name' => 'Maní Salado Jack\'s 100g', 'brand' => 'Jack\'s', 'unit_type' => 'unit', 'cost' => 0.50 * 540, 'price' => 0.80 * 540],
-                ['name' => 'Chis Tris Queso 120g', 'brand' => 'Frito-Lay', 'unit_type' => 'unit', 'cost' => 0.75 * 540, 'price' => 1.15 * 540],
+            'lenceria' => [
+                ['name' => 'Body de Encaje Transparente', 'brand' => 'SEXLANDIA', 'cost' => 9, 'price' => 19, 'desc' => 'Body de encaje floral con espalda descubierta y broches en la entrepierna. Tallas S a XL.'],
+                ['name' => 'Conjunto Bralette y Liguero', 'brand' => 'SEXLANDIA', 'cost' => 12, 'price' => 24, 'desc' => 'Set de tres piezas: bralette, tanga y liguero ajustable en satén y encaje.'],
+                ['name' => 'Baby Doll Satén con Tanga', 'brand' => 'SEXLANDIA', 'cost' => 10, 'price' => 21, 'desc' => 'Baby doll de satén suave con detalles de encaje y tanga a juego. Corte favorecedor.'],
+                ['name' => 'Disfraz Enfermera Sexy', 'brand' => 'SEXLANDIA', 'cost' => 13, 'price' => 26, 'desc' => 'Disfraz de rol de 3 piezas con vestido ajustado, gorro y stockings. Juego y fantasía.'],
+                ['name' => 'Medias de Rejilla con Liga', 'brand' => 'SEXLANDIA', 'cost' => 3, 'price' => 8, 'desc' => 'Medias altas de rejilla con banda de silicona autoadherente. Talla única elástica.'],
+                ['name' => 'Kimono Corto de Malla', 'brand' => 'SEXLANDIA', 'cost' => 8, 'price' => 17, 'desc' => 'Bata corta translúcida con mangas amplias y cinturón. Ligera y sensual.'],
             ],
-            'otros' => [
-                ['name' => 'Papel Higiénico Scott 4 Rollos', 'brand' => 'Scott', 'unit_type' => 'unit', 'cost' => 1.40 * 540, 'price' => 2.00 * 540],
-                ['name' => 'Crema Dental Colgate Triple Acción 75ml', 'brand' => 'Colgate', 'unit_type' => 'unit', 'cost' => 1.10 * 540, 'price' => 1.60 * 540],
-                ['name' => 'Jabón de Tocador Lux Suave 125g', 'brand' => 'Lux', 'unit_type' => 'unit', 'cost' => 0.60 * 540, 'price' => 0.90 * 540],
-                ['name' => 'Champú Head & Shoulders Renovadora 375ml', 'brand' => 'P&G', 'unit_type' => 'unit', 'cost' => 3.20 * 540, 'price' => 4.50 * 540],
-                ['name' => 'Toallas Húmedas Huggies Triple Cuidado 80', 'brand' => 'Huggies', 'unit_type' => 'unit', 'cost' => 2.10 * 540, 'price' => 2.99 * 540],
-                ['name' => 'Desodorante Speed Stick Active Fresh 50g', 'brand' => 'Colgate', 'unit_type' => 'unit', 'cost' => 1.90 * 540, 'price' => 2.70 * 540],
-                ['name' => 'Máquina de Afeitar Prestobarba 3 (2 Und)', 'brand' => 'Gillette', 'unit_type' => 'unit', 'cost' => 1.50 * 540, 'price' => 2.20 * 540],
-                ['name' => 'Servilletas de Papel Familia 100 Und', 'brand' => 'Familia', 'unit_type' => 'unit', 'cost' => 0.80 * 540, 'price' => 1.20 * 540],
+            'bienestar-intimo' => [
+                ['name' => 'Pure Instinct Hair & Body Mist', 'brand' => 'Pure Instinct', 'cost' => 16, 'price' => 28, 'desc' => 'Bruma con feromonas para cabello y cuerpo. Aroma envolvente unisex de larga fijación.'],
+                ['name' => 'Perfume con Feromonas Roll-On 10ml', 'brand' => 'Pure Instinct', 'cost' => 11, 'price' => 20, 'desc' => 'Aceite de feromonas en formato roll-on para aplicar en los puntos de pulso.'],
+                ['name' => 'Jabón Íntimo pH Balanceado 250ml', 'brand' => 'SEXLANDIA', 'cost' => 5, 'price' => 11, 'desc' => 'Limpiador íntimo suave sin jabón, con ácido láctico y aloe. Uso diario.'],
+                ['name' => 'Toallitas Íntimas Individuales x10', 'brand' => 'SEXLANDIA', 'cost' => 3, 'price' => 7, 'desc' => 'Toallitas húmedas biodegradables en sobres individuales. Discretas para el bolso.'],
+                ['name' => 'Limpiador de Juguetes Antibacterial 100ml', 'brand' => 'SEXLANDIA', 'cost' => 6, 'price' => 12, 'desc' => 'Spray higienizante sin alcohol para juguetes de silicona, TPE y ABS. Secado rápido.'],
+                ['name' => 'Aceite de Masaje Sensorial 200ml', 'brand' => 'SEXLANDIA', 'cost' => 8, 'price' => 16, 'desc' => 'Aceite corporal de almendras con vitamina E y aroma cálido. Ideal para preliminares.'],
             ],
         ];
 
-        $count = 0;
-        $totalRequested = 50;
+        // Pool de imágenes disponibles en public/sexlandia (excluye el logo)
+        $imagePool = collect(glob(public_path('sexlandia/*.jpg')) ?: [])
+            ->reject(fn ($p) => Str::contains(strtolower(basename($p)), 'logo'))
+            ->values();
+        $imageService = app(ProductImageService::class);
+        $imgIndex = 0;
 
-        // Loop to create exactly 50 products rotating categories
-        while ($count < $totalRequested) {
-            foreach ($categories as $category) {
-                if ($count >= $totalRequested) {
-                    break;
-                }
+        $seq = 0;
+        foreach ($productBank as $slug => $items) {
+            $category = $categories->firstWhere('slug', $slug);
+            if (! $category) {
+                continue;
+            }
 
-                $slug = Str::slug($category->name);
-                $bank = $productBank[$slug] ?? $productBank['otros'];
+            foreach ($items as $i => $tpl) {
+                $seq++;
+                $name = $tpl['name'];
+                $sku = 'SKU-'.str_pad((string) $seq, 5, '0', STR_PAD_LEFT);
+                $barcode = '7591000'.str_pad((string) $seq, 5, '0', STR_PAD_LEFT);
 
-                // Get a product item from the bank, rotating using count
-                $itemIndex = $count % count($bank);
-                $template = $bank[$itemIndex];
-
-                // Append a unique code suffix to avoid duplicate names and slugs
-                $suffix = ' #'.($count + 1);
-                $name = $template['name'].$suffix;
-                $pSlug = Str::slug($name);
-
-                // Generate unique barcodes and SKUs
-                $sku = 'SKU-'.str_pad($count + 1, 5, '0', STR_PAD_LEFT);
-                $barcode = '7591000'.str_pad($count + 1, 5, '0', STR_PAD_LEFT);
-
-                // Create the product
                 $product = Product::create([
                     'category_id' => $category->id,
                     'uuid' => (string) Str::uuid(),
                     'name' => $name,
-                    'slug' => $pSlug,
-                    'description' => "Seeder automático para {$name}. Excelente producto de calidad garantizada.",
+                    'slug' => Str::slug($name).'-'.$seq,
+                    'description' => $tpl['desc'],
                     'sku' => $sku,
                     'sku_barcode' => $barcode,
-                    'brand' => $template['brand'],
-                    'cost' => $template['cost'],
-                    'price' => $template['price'],
-                    'unit_type' => $template['unit_type'],
+                    'brand' => $tpl['brand'],
+                    'cost' => $tpl['cost'],
+                    'price' => $tpl['price'],
+                    'unit_type' => 'unit',
                     'track_inventory' => true,
                     'allow_negative_stock' => false,
                     'has_variants' => false,
@@ -166,116 +140,59 @@ class ProductSeeder extends Seeder
                     'created_by' => $creator->id,
                 ]);
 
-                // Determine stock bounds (measured in grams if unit_type is 'gram')
-                $initialStock = $template['unit_type'] === 'gram'
-                    ? rand(10000, 80000) // 10kg to 80kg
-                    : rand(15, 120);     // 15 units to 120 units
-
-                $minStock = $template['unit_type'] === 'gram'
-                    ? 5000               // 5kg min stock
-                    : rand(5, 10);       // 5 to 10 units min stock
-
-                $maxStock = $template['unit_type'] === 'gram'
-                    ? 100000             // 100kg max stock
-                    : rand(150, 200);    // 150 to 200 units max stock
-
-                // Create associated inventory entry
                 Inventory::create([
                     'product_id' => $product->id,
-                    'stock' => $initialStock,
+                    'stock' => rand(4, 40),
                     'reserved_stock' => 0,
-                    'minimum_stock' => $minStock,
-                    'maximum_stock' => $maxStock,
+                    'minimum_stock' => rand(3, 6),
+                    'maximum_stock' => rand(60, 120),
                 ]);
 
-                // Seed BULK packaging/presentations (Prestaciones) based on product unit_type
-                if ($template['unit_type'] === 'gram') {
-                    // Weighable / gram products get Kilo (default) and Gramo presentations
-                    if (isset($bulkTypesMap['kilo'])) {
-                        Bulk::create([
-                            'product_id' => $product->id,
-                            'bulk_type_id' => $bulkTypesMap['kilo'],
-                            'name' => 'Kilo',
-                            'description' => 'Venta al por kilo (1000 gramos)',
-                            'quantity' => 1000.00,
-                            'purchase_price' => $template['cost'] * 1000,
-                            'sale_price' => $template['price'] * 1000,
-                            'sku' => $product->sku.'-KG',
-                            'sku_barcode' => $product->sku_barcode.'1',
-                            'is_default' => true,
-                            'is_active' => true,
-                        ]);
-                    }
-
-                    if (isset($bulkTypesMap['gramo'])) {
-                        Bulk::create([
-                            'product_id' => $product->id,
-                            'bulk_type_id' => $bulkTypesMap['gramo'],
-                            'name' => 'Gramo',
-                            'description' => 'Venta al detalle por gramo individual',
-                            'quantity' => 1.00,
-                            'purchase_price' => $template['cost'],
-                            'sale_price' => $template['price'],
-                            'sku' => $product->sku.'-GR',
-                            'sku_barcode' => $product->sku_barcode.'2',
-                            'is_default' => false,
-                            'is_active' => true,
-                        ]);
-                    }
-                } else {
-                    // Standard Unit products get Unidad (default), Caja, and Bulto presentations
-                    if (isset($bulkTypesMap['unidad'])) {
-                        Bulk::create([
-                            'product_id' => $product->id,
-                            'bulk_type_id' => $bulkTypesMap['unidad'],
-                            'name' => 'Unidad',
-                            'description' => 'Venta por unidad individual al detal',
-                            'quantity' => 1.00,
-                            'purchase_price' => $template['cost'],
-                            'sale_price' => $template['price'],
-                            'sku' => $product->sku.'-UND',
-                            'sku_barcode' => $product->sku_barcode.'1',
-                            'is_default' => true,
-                            'is_active' => true,
-                        ]);
-                    }
-
-                    if (isset($bulkTypesMap['caja'])) {
-                        Bulk::create([
-                            'product_id' => $product->id,
-                            'bulk_type_id' => $bulkTypesMap['caja'],
-                            'name' => 'Caja (12 Unidades)',
-                            'description' => 'Caja sellada conteniendo 12 unidades (5% desc.)',
-                            'quantity' => 12.00,
-                            // 5% discount for box purchase
-                            'purchase_price' => round($template['cost'] * 12 * 0.95, 2),
-                            'sale_price' => round($template['price'] * 12 * 0.95, 2),
-                            'sku' => $product->sku.'-CJ',
-                            'sku_barcode' => $product->sku_barcode.'2',
-                            'is_default' => false,
-                            'is_active' => true,
-                        ]);
-                    }
-
-                    if (isset($bulkTypesMap['bulto'])) {
-                        Bulk::create([
-                            'product_id' => $product->id,
-                            'bulk_type_id' => $bulkTypesMap['bulto'],
-                            'name' => 'Bulto (24 Unidades)',
-                            'description' => 'Bulto distribuidor conteniendo 24 unidades (10% desc.)',
-                            'quantity' => 24.00,
-                            // 10% discount for bulk purchase
-                            'purchase_price' => round($template['cost'] * 24 * 0.90, 2),
-                            'sale_price' => round($template['price'] * 24 * 0.90, 2),
-                            'sku' => $product->sku.'-BLT',
-                            'sku_barcode' => $product->sku_barcode.'3',
-                            'is_default' => false,
-                            'is_active' => true,
-                        ]);
-                    }
+                if (isset($bulkTypesMap['unidad'])) {
+                    Bulk::create([
+                        'product_id' => $product->id,
+                        'bulk_type_id' => $bulkTypesMap['unidad'],
+                        'name' => 'Unidad',
+                        'description' => 'Venta por unidad individual al detal',
+                        'quantity' => 1.00,
+                        'purchase_price' => $tpl['cost'],
+                        'sale_price' => $tpl['price'],
+                        'sku' => $product->sku.'-UND',
+                        'sku_barcode' => $product->sku_barcode.'1',
+                        'is_default' => true,
+                        'is_active' => true,
+                    ]);
                 }
 
-                $count++;
+                if (isset($bulkTypesMap['caja'])) {
+                    Bulk::create([
+                        'product_id' => $product->id,
+                        'bulk_type_id' => $bulkTypesMap['caja'],
+                        'name' => 'Caja (6 Unidades)',
+                        'description' => 'Caja sellada de 6 unidades (10% desc.)',
+                        'quantity' => 6.00,
+                        'purchase_price' => round($tpl['cost'] * 6 * 0.90, 2),
+                        'sale_price' => round($tpl['price'] * 6 * 0.90, 2),
+                        'sku' => $product->sku.'-CJ',
+                        'sku_barcode' => $product->sku_barcode.'2',
+                        'is_default' => false,
+                        'is_active' => true,
+                    ]);
+                }
+
+                // Imagen(es) optimizada(s) desde el pool
+                if ($imagePool->isNotEmpty()) {
+                    $primaryPath = $imagePool[$imgIndex % $imagePool->count()];
+                    $imgIndex++;
+                    $imageService->attachToProduct($product, $primaryPath, sortOrder: 0, isPrimary: true, altText: $name);
+
+                    // El primer producto de cada categoría recibe una segunda foto
+                    if ($i === 0) {
+                        $secondPath = $imagePool[$imgIndex % $imagePool->count()];
+                        $imgIndex++;
+                        $imageService->attachToProduct($product, $secondPath, sortOrder: 1, isPrimary: false, altText: $name);
+                    }
+                }
             }
         }
     }

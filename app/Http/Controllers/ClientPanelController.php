@@ -14,9 +14,9 @@ use App\Models\OrderPayment;
 use App\Models\PaymentMethod;
 use App\Models\PaymentProof;
 use App\Models\Product;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -49,68 +49,84 @@ class ClientPanelController extends Controller
     }
 
     /**
-     * Vista pública del catálogo/escaparate de productos para visitantes e invitados.
+     * Landing / escaparate público de SEXLANDIA.
      */
     public function storefront()
     {
-        // 1. Redirecciones prioritarias si el usuario ya está autenticado
-        if (Auth::check()) {
-            $user = Auth::user();
-
-            // Si es Admin, va a su dashboard
-            if ($user->hasRole('admin')) {
-                return redirect()->route('dashboard');
-            }
-
-            // Si es Client, va a su dashboard de cliente
-            if ($user->hasRole('client')) {
-                return redirect()->route('client.dashboard');
-            }
+        // El admin conserva su panel dedicado; el cliente y el invitado ven la portada.
+        if (Auth::check() && Auth::user()->hasRole('admin')) {
+            return redirect()->route('dashboard');
         }
 
-        // 2. Si no está autenticado o no coincide con los roles de arriba, ve la tienda pública
+        return view('storefront.index', $this->storefrontData());
+    }
+
+    /**
+     * Página dedicada "Nosotros" (SEO).
+     */
+    public function nosotros()
+    {
+        return view('storefront.pages.nosotros', $this->storefrontData());
+    }
+
+    /**
+     * Página dedicada "Contacto / Ubicación" (SEO).
+     */
+    public function contacto()
+    {
+        return view('storefront.pages.contacto', $this->storefrontData());
+    }
+
+    /**
+     * Datos compartidos por el landing y las páginas dedicadas.
+     */
+    private function storefrontData(): array
+    {
         $products = Product::with(['category', 'inventory', 'images'])
             ->where('status', 'active')
+            ->orderByDesc('id')
             ->get();
 
-        $categories = Category::where('is_active', true)->get();
+        $byCategory = $products->groupBy('category_id');
 
-        // Cargar datos de cliente (Por si acaso tu vista 'welcome' maneja alguna lógica condicional)
+        $categories = Category::where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(function ($category) use ($byCategory) {
+                $items = $byCategory->get($category->id, collect());
+                $category->visible_count = $items->count();
+                $category->cover = optional(
+                    optional($items->first(fn ($p) => $p->images->isNotEmpty()))->images
+                )->first()?->path;
+
+                return $category;
+            })
+            ->filter(fn ($c) => $c->visible_count > 0)
+            ->values();
+
+        $featuredId = config('site.featured_product_id');
+        $featured = $featuredId ? $products->firstWhere('id', $featuredId) : null;
+        // Sin id fijado: preferimos un producto con varias fotos (para el carrusel),
+        // luego cualquiera con foto, y por último el primero disponible.
+        $featured = $featured
+            ?: $products->first(fn ($p) => $p->images->count() > 1)
+            ?: $products->first(fn ($p) => $p->images->isNotEmpty())
+            ?: $products->first();
+
+        $gallery = $products->filter(fn ($p) => $p->images->isNotEmpty())->take(12)->values();
+
+        $inventoryList = $products
+            ->filter(fn ($p) => $p->track_inventory)
+            ->sortByDesc(fn ($p) => $p->inventory->stock ?? 0)
+            ->take(6)
+            ->values();
+
         $client = null;
         if (Auth::check() && Auth::user()->hasRole('client')) {
             $client = $this->getClient();
         }
 
-        // Nota: Recuerda remover el dd() para que el flujo continúe normalmente
-        return view('welcome', compact('products', 'categories', 'client'));
-    }
-
-    /**
-     * Vista principal del panel de cliente.
-     */
-    public function dashboard()
-    {
-        $client = $this->getClient();
-
-        // 1. Estadísticas
-        $ordersQuery = Order::where('client_id', $client->id);
-        $totalOrders = (clone $ordersQuery)->count();
-
-        $pendingOrders = (clone $ordersQuery)->where('payment_status', '!=', 'paid')
-            ->where('status', '!=', 'cancelled')->count();
-
-        // Suma de deudas pendientes desde cuentas por cobrar
-        $totalDebt = AccountReceivable::where('client_id', $client->id)
-            ->where('status', '!=', 'paid')
-            ->sum('pending_amount');
-
-        // Últimos 3 pedidos
-        $recentOrders = (clone $ordersQuery)
-            ->orderBy('created_at', 'desc')
-            ->limit(3)
-            ->get();
-
-        return view('client.dashboard', compact('client', 'totalOrders', 'pendingOrders', 'totalDebt', 'recentOrders'));
+        return compact('products', 'categories', 'featured', 'gallery', 'inventoryList', 'client');
     }
 
     public function checkoutView()
@@ -122,16 +138,14 @@ class ClientPanelController extends Controller
             ->where('show_in_checkout', true)
             ->get();
 
-        return view('client.checkout', compact('client', 'paymentMethods'));
+        return view('storefront.pages.checkout', compact('client', 'paymentMethods'));
     }
 
     /**
-     * Vista del catálogo de productos y carrito de compras.
+     * Catálogo completo público, renderizado dentro del shell del storefront.
      */
-    public function products(Request $request)
+    public function catalog(Request $request)
     {
-        $client = $this->getClient();
-
         $query = Product::with(['category', 'inventory', 'images'])
             ->where('status', 'active');
 
@@ -147,10 +161,12 @@ class ClientPanelController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        $products = $query->paginate(6)->withQueryString();
-        $categories = Category::where('is_active', true)->get();
+        $products = $query->orderByDesc('id')->paginate(9)->withQueryString();
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
 
-        return view('client.products', compact('client', 'products', 'categories'));
+        $client = Auth::check() && Auth::user()->hasRole('client') ? $this->getClient() : null;
+
+        return view('storefront.pages.catalogo', compact('products', 'categories', 'client'));
     }
 
     /**
@@ -159,11 +175,10 @@ class ClientPanelController extends Controller
     public function checkout(Request $request)
     {
         $client = $this->getClient();
-        $exchangeRate = Cache::get('usd_exchange_rate'); // Usando la llave corregida
-        $rateVal = $exchangeRate ? (float) str_replace(',', '.', $exchangeRate) : 1.0;
-        if ($rateVal <= 0) {
-            $rateVal = 1.0;
-        }
+
+        // Tasa Bs/USD del momento. Los precios se guardan en USD; este valor solo
+        // se registra como snapshot histórico en la orden para reconstruir el Bs.
+        $rateVal = app(CurrencyService::class)->rateOr(1.0);
 
         $validated = $request->validate([
             'cart_items' => 'required|json',
@@ -357,7 +372,7 @@ class ClientPanelController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
-        return view('client.purchases', compact('client', 'orders'));
+        return view('storefront.pages.compras', compact('client', 'orders'));
     }
 
     /**
@@ -381,7 +396,7 @@ class ClientPanelController extends Controller
 
         $paymentMethods = PaymentMethod::where('is_active', true)->where('show_in_checkout', true)->get();
 
-        return view('client.invoices', compact('client', 'invoices', 'accounts', 'paymentMethods'));
+        return view('storefront.pages.facturas', compact('client', 'invoices', 'accounts', 'paymentMethods'));
     }
 
     /**
@@ -405,7 +420,7 @@ class ClientPanelController extends Controller
             ->findOrFail($validated['account_receivable_id']);
 
         if ($validated['amount'] > $account->pending_amount) {
-            return back()->withInput()->withErrors(['error' => 'El monto del abono no puede superar el saldo pendiente ('.number_format($account->pending_amount, 2, ',', '.').' BS).']);
+            return back()->withInput()->withErrors(['error' => 'El monto del abono no puede superar el saldo pendiente ($'.number_format($account->pending_amount, 2, ',', '.').' USD).']);
         }
 
         try {
@@ -467,7 +482,7 @@ class ClientPanelController extends Controller
         $client = $this->getClient();
         $user = Auth::user();
 
-        return view('client.profile', compact('client', 'user'));
+        return view('storefront.pages.perfil', compact('client', 'user'));
     }
 
     /**
