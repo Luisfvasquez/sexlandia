@@ -4,6 +4,12 @@
 
 @push('head')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #checkout-map { background: #0e0d0e; }
+        #checkout-map .leaflet-tile { filter: grayscale(.4) invert(1) contrast(.85) hue-rotate(180deg) brightness(.9); }
+        #checkout-map .leaflet-control-attribution { background: rgba(23,21,21,.7); color: rgba(255,255,255,.6); }
+        #checkout-map .leaflet-control-attribution a { color: rgba(255,255,255,.75); }
+    </style>
 @endpush
 
 @section('content')
@@ -11,85 +17,89 @@
         $safeRate = isset($exchangeRate) && $exchangeRate > 0 ? (float) str_replace(',', '.', $exchangeRate) : 1;
     @endphp
 
-    <section class="account section-pad" x-data="checkoutManager()" x-init="init()" style="padding-top:120px;">
-        <div class="account__intro reveal">
-            <a class="arrow-link" href="{{ route('storefront.catalog') }}" style="margin-bottom:18px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                VOLVER AL CATÁLOGO
-            </a>
-            <h1>Finalizar <em>compra.</em></h1>
-            <p class="account__lead">Verifica tus productos, elige el método de entrega y reporta tu pago.</p>
-        </div>
+    <section class="relative bg-ink border-t border-white/5 overflow-hidden pt-32 pb-24 lg:pb-32" x-data="checkoutManager()" x-init="init()">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(141,38,61,0.08),_transparent_60%)] pointer-events-none"></div>
 
-        @if ($errors->any())
-            <div class="max-w-5xl mx-auto mb-6">
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-2xl flex flex-col gap-1 shadow-sm">
+        <div class="relative w-full max-w-5xl mx-auto px-6 lg:px-8">
+            <div class="mb-12 animate-slide-up-fade">
+                <a href="{{ route('storefront.catalog') }}" class="group inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.2em] uppercase text-neutral-400 hover:text-rose-400 border-b border-white/20 hover:border-rose-400 pb-2 mb-6 transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="transition-transform group-hover:-translate-x-1" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Volver al catálogo
+                </a>
+                <h1 class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                    Finalizar <em class="font-serif italic text-rose-500 font-normal">compra.</em>
+                </h1>
+                <p class="mt-6 text-neutral-400 font-light text-sm lg:text-base leading-relaxed max-w-xl border-l border-white/10 pl-5">
+                    Verifica tus productos, elige el método de entrega y reporta tu pago.
+                </p>
+            </div>
+
+            @if ($errors->any())
+                <div class="mb-6 bg-rose-500/10 border border-rose-500/20 text-rose-300 px-4 py-3 rounded-xl flex flex-col gap-1">
                     @foreach ($errors->all() as $error)
                         <span class="font-semibold text-sm">{{ $error }}</span>
                     @endforeach
                 </div>
-            </div>
-        @endif
+            @endif
 
-        <div class="max-w-5xl mx-auto">
             <form action="{{ route('client.checkout') }}" method="POST" enctype="multipart/form-data"
                 @submit="setTimeout(() => isSubmitting = true, 50)" class="flex flex-col lg:flex-row gap-8">
                 @csrf
                 <input type="hidden" name="cart_items" :value="JSON.stringify(prepareCartForSubmit())" />
 
                 <div class="flex-1 space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                    <div class="bg-white/[0.03] border border-white/10 p-6 rounded-xl space-y-4">
                         <div class="flex items-center gap-2 mb-2">
-                            <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center"><span class="font-extrabold">1</span></div>
-                            <h3 class="font-extrabold text-slate-800 text-lg">Método de Entrega</h3>
+                            <div class="w-8 h-8 bg-rose-500/10 text-rose-300 border border-rose-500/20 rounded-lg flex items-center justify-center"><span class="font-extrabold">1</span></div>
+                            <h3 class="font-extrabold text-white text-lg">Método de entrega</h3>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <label class="relative flex cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-400"
-                                :class="{ 'ring-2 ring-indigo-600 border-indigo-600 bg-indigo-50/30': deliveryType === 'store_pickup' }">
+                            <label class="relative flex cursor-pointer rounded-xl border border-white/10 bg-white/[0.02] p-4 hover:border-white/30 transition-colors"
+                                :class="{ 'ring-2 ring-rose-500 border-rose-500 bg-rose-500/5': deliveryType === 'store_pickup' }">
                                 <input type="radio" name="delivery_type" value="store_pickup" x-model="deliveryType" class="sr-only">
                                 <div class="flex flex-col">
-                                    <span class="block text-sm font-bold text-slate-900">Retiro en Tienda</span>
-                                    <span class="mt-1 text-xs text-slate-500">Busca tu pedido sin costo adicional.</span>
+                                    <span class="block text-sm font-bold text-white">Retiro en tienda</span>
+                                    <span class="mt-1 text-xs text-neutral-400">Busca tu pedido sin costo adicional.</span>
                                 </div>
                             </label>
-                            <label class="relative flex cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-400"
-                                :class="{ 'ring-2 ring-indigo-600 border-indigo-600 bg-indigo-50/30': deliveryType === 'delivery' }">
+                            <label class="relative flex cursor-pointer rounded-xl border border-white/10 bg-white/[0.02] p-4 hover:border-white/30 transition-colors"
+                                :class="{ 'ring-2 ring-rose-500 border-rose-500 bg-rose-500/5': deliveryType === 'delivery' }">
                                 <input type="radio" name="delivery_type" value="delivery" x-model="deliveryType" class="sr-only">
                                 <div class="flex flex-col">
-                                    <span class="block text-sm font-bold text-slate-900">Delivery</span>
-                                    <span class="mt-1 text-xs text-slate-500">Recibe en tu dirección.</span>
+                                    <span class="block text-sm font-bold text-white">Delivery</span>
+                                    <span class="mt-1 text-xs text-neutral-400">Recibe en tu dirección.</span>
                                 </div>
                             </label>
                         </div>
 
                         <div x-show="deliveryType === 'delivery'" x-transition class="space-y-4 pt-2">
                             <div class="space-y-2">
-                                <label class="block text-slate-700 font-extrabold text-xs uppercase tracking-wider">Dirección detallada</label>
+                                <label class="block text-neutral-300 font-extrabold text-xs uppercase tracking-wider">Dirección detallada</label>
                                 <textarea name="delivery_address" id="delivery_address" rows="2" placeholder="Ej: Av. Principal, Urb. Centro, Casa Nro 45..."
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm transition-all outline-none">{{ old('delivery_address', $client->address) }}</textarea>
+                                    class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white placeholder-neutral-600 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 text-sm transition-all outline-none">{{ old('delivery_address', $client->address) }}</textarea>
                             </div>
                             <input type="hidden" name="latitude" id="input_latitude" value="{{ old('latitude', $client->latitude) }}">
                             <input type="hidden" name="longitude" id="input_longitude" value="{{ old('longitude', $client->longitude) }}">
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <label class="block text-slate-700 font-extrabold text-xs uppercase tracking-wider">📍 Ubicación en el mapa</label>
-                                    <button type="button" id="btn-use-location" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg border border-indigo-200 transition">🎯 Usar mi ubicación (GPS)</button>
+                                    <label class="block text-neutral-300 font-extrabold text-xs uppercase tracking-wider">📍 Ubicación en el mapa</label>
+                                    <button type="button" id="btn-use-location" class="text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-bold px-3 py-1.5 rounded-lg border border-rose-500/20 transition">🎯 Usar mi ubicación (GPS)</button>
                                 </div>
-                                <p class="text-xs text-slate-500">Arrastra el marcador o haz clic en el mapa para fijar tu ubicación.</p>
-                                <div id="checkout-map" class="w-full h-64 rounded-xl border border-slate-200 shadow-inner z-10"></div>
+                                <p class="text-xs text-neutral-400">Arrastra el marcador o haz clic en el mapa para fijar tu ubicación.</p>
+                                <div id="checkout-map" class="w-full h-64 rounded-xl border border-white/10 z-10"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                    <div class="bg-white/[0.03] border border-white/10 p-6 rounded-xl space-y-4">
                         <div class="flex items-center gap-2 mb-2">
-                            <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center"><span class="font-extrabold">2</span></div>
-                            <h3 class="font-extrabold text-slate-800 text-lg">Reporte de Pago</h3>
+                            <div class="w-8 h-8 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg flex items-center justify-center"><span class="font-extrabold">2</span></div>
+                            <h3 class="font-extrabold text-white text-lg">Reporte de pago</h3>
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-slate-700 font-extrabold text-xs uppercase tracking-wider">¿A dónde transferiste?</label>
+                            <label class="block text-neutral-300 font-extrabold text-xs uppercase tracking-wider">¿A dónde transferiste?</label>
                             <select name="payment_method_id" x-model="selectedMethod" @change="updateMethodDescription()" required
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-semibold text-slate-700 transition-all outline-none">
+                                class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 text-sm font-semibold transition-all outline-none [&>option]:bg-neutral-900">
                                 <option value="" disabled selected>Selecciona una cuenta receptora...</option>
                                 @foreach ($paymentMethods as $pm)
                                     <option value="{{ $pm->id }}" data-desc="{{ $pm->description }}">{{ $pm->name }}</option>
@@ -97,64 +107,64 @@
                             </select>
                         </div>
                         <div x-show="methodDescription !== ''" x-transition
-                            class="bg-indigo-50 border border-indigo-100/50 rounded-xl p-4 text-xs text-indigo-900 whitespace-pre-wrap font-mono" x-text="methodDescription"></div>
+                            class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 text-xs text-rose-200 whitespace-pre-wrap font-mono" x-text="methodDescription"></div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                             <div class="space-y-2">
-                                <label class="block text-slate-700 font-extrabold text-xs uppercase tracking-wider">Número de referencia</label>
+                                <label class="block text-neutral-300 font-extrabold text-xs uppercase tracking-wider">Número de referencia</label>
                                 <input type="text" name="reference" required value="{{ old('reference') }}" maxlength="50" placeholder="Ej: 001456228"
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-bold transition-all outline-none" />
+                                    class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white placeholder-neutral-600 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 text-sm font-bold transition-all outline-none" />
                             </div>
                             <div class="space-y-2">
-                                <label class="block text-slate-700 font-extrabold text-xs uppercase tracking-wider">Comprobante (imagen)</label>
+                                <label class="block text-neutral-300 font-extrabold text-xs uppercase tracking-wider">Comprobante (imagen)</label>
                                 <input type="file" name="payment_proof" accept="image/png, image/jpeg, image/jpg, image/webp" required
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 focus:bg-white text-xs font-semibold text-slate-500 transition-all outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200" />
+                                    class="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-xs font-semibold text-neutral-400 transition-all outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-rose-500/15 file:text-rose-300 hover:file:bg-rose-500/25" />
                             </div>
                         </div>
                         <div class="space-y-2 pt-2">
-                            <label class="block text-slate-700 font-extrabold text-xs uppercase tracking-wider">Notas adicionales (opcional)</label>
+                            <label class="block text-neutral-300 font-extrabold text-xs uppercase tracking-wider">Notas adicionales (opcional)</label>
                             <textarea name="notes" rows="2" placeholder="Alguna indicación sobre tu pago o pedido..."
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm transition-all outline-none">{{ old('notes') }}</textarea>
+                                class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white placeholder-neutral-600 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 text-sm transition-all outline-none">{{ old('notes') }}</textarea>
                         </div>
                     </div>
                 </div>
 
                 <div class="w-full lg:w-96 shrink-0">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-6">
-                        <h3 class="font-extrabold text-slate-800 text-lg mb-4 border-b border-slate-100 pb-3">Resumen de compra</h3>
-                        <div class="max-h-64 overflow-y-auto divide-y divide-slate-100 pr-2 mb-4 scrollbar-thin">
+                    <div class="bg-white/[0.03] border border-white/10 p-6 rounded-xl sticky top-28">
+                        <h3 class="font-extrabold text-white text-lg mb-4 border-b border-white/10 pb-3">Resumen de compra</h3>
+                        <div class="max-h-64 overflow-y-auto divide-y divide-white/10 pr-2 mb-4 scrollbar-thin">
                             <template x-for="item in cart" :key="item.id">
                                 <div class="py-3 flex justify-between gap-2">
                                     <div class="min-w-0 flex-1">
-                                        <span x-text="item.name" class="text-sm font-bold text-slate-800 block truncate"></span>
-                                        <span class="text-xs font-semibold text-slate-400"><span x-text="formatQuantity(item)"></span> x $<span x-text="formatCurrency(item.display_price)"></span></span>
+                                        <span x-text="item.name" class="text-sm font-bold text-white block truncate"></span>
+                                        <span class="text-xs font-semibold text-neutral-500"><span x-text="formatQuantity(item)"></span> x $<span x-text="formatCurrency(item.display_price)"></span></span>
                                     </div>
                                     <div class="text-right shrink-0">
-                                        <span x-text="'$' + formatCurrency(calculateItemTotal(item))" class="font-extrabold text-slate-800 text-sm block"></span>
+                                        <span x-text="'$' + formatCurrency(calculateItemTotal(item))" class="font-extrabold text-white text-sm block"></span>
                                         @if ($exchangeRate)
-                                            <span x-text="formatCurrency(calculateItemTotal(item) * {{ $safeRate }}) + ' BS'" class="text-indigo-600 font-bold text-xxs block"></span>
+                                            <span x-text="formatCurrency(calculateItemTotal(item) * {{ $safeRate }}) + ' BS'" class="text-rose-400 font-bold text-[10px] block"></span>
                                         @endif
                                     </div>
                                 </div>
                             </template>
                         </div>
-                        <div class="bg-indigo-50/50 border border-indigo-100/50 rounded-xl p-4 space-y-3">
-                            <div class="flex justify-between items-center text-sm font-semibold text-indigo-900/70">
+                        <div class="bg-rose-500/[0.07] border border-rose-500/20 rounded-xl p-4 space-y-3">
+                            <div class="flex justify-between items-center text-sm font-semibold text-neutral-300">
                                 <span>Cant. de ítems</span><span x-text="cart.length"></span>
                             </div>
-                            <hr class="border-indigo-100/50" />
+                            <hr class="border-white/10" />
                             <div class="flex justify-between items-end">
-                                <span class="text-sm font-extrabold text-slate-800 block">Total a pagar</span>
+                                <span class="text-sm font-extrabold text-white block">Total a pagar</span>
                                 <div class="text-right">
-                                    <span x-text="'$' + formatCurrency(calculateTotal())" class="text-2xl font-black text-slate-900 block leading-none"></span>
+                                    <span x-text="'$' + formatCurrency(calculateTotal())" class="text-2xl font-black text-white block leading-none"></span>
                                     @if ($exchangeRate)
-                                        <span x-text="'≈ ' + formatCurrency(calculateTotal() * {{ $safeRate }}) + ' BS'" class="font-bold text-indigo-700 text-xs block mt-1"></span>
+                                        <span x-text="'≈ ' + formatCurrency(calculateTotal() * {{ $safeRate }}) + ' BS'" class="font-bold text-rose-400 text-xs block mt-1"></span>
                                     @endif
                                 </div>
                             </div>
                         </div>
                         <button type="submit" :disabled="cart.length === 0 || isSubmitting"
-                            class="w-full mt-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 text-white font-extrabold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
+                            class="w-full mt-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-neutral-700 disabled:to-neutral-700 disabled:text-neutral-500 text-white font-extrabold py-3.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
                             <span x-text="isSubmitting ? 'Procesando envío...' : 'Confirmar pago y pedido'"></span>
                         </button>
                     </div>
