@@ -54,8 +54,7 @@
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/sexlandia.css') }}">
     @stack('head')
@@ -77,13 +76,33 @@
                         },
                     },
                     fontFamily: {
-                        sans: ['"DM Sans"', 'Figtree', 'sans-serif'],
-                        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                        serif: ['"Cormorant Garamond"', 'serif'],
                     },
+                    animation: {
+                        'fade-in': 'fadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'slide-up-fade': 'slideUpFade 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'breathe': 'breathe 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUpFade: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        breathe: {
+                            '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(225, 29, 72, 0)' },
+                            '50%': { transform: 'scale(1.03)', boxShadow: '0 0 25px 5px rgba(225, 29, 72, 0.3)' },
+                        }
+                    }
                 },
             },
         };
     </script>
+
     <style>
         /* Helpers usados por las vistas de cliente reubicadas en el shell del storefront */
         [x-cloak] { display: none !important; }
@@ -100,7 +119,7 @@
 
     @stack('jsonld')
 </head>
-<body class="sexlandia-shell">
+<body class="sexlandia-shell bg-ink text-white antialiased selection:bg-rose-500/30 selection:text-white font-sans">
     <a href="#contenido" class="skip-link">Saltar al contenido</a>
     <div class="scroll-progress" aria-hidden="true"></div>
 
