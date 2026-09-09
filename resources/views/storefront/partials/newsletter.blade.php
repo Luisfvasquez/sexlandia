@@ -10,7 +10,7 @@
             {{-- Copy --}}
             <div class="animate-slide-up-fade">
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">NOVEDADES &amp; LANZAMIENTOS</p>
-                <h2 id="newsletter-title" class="text-6xl lg:text-[7rem] leading-[1.05] text-white font-bold tracking-tight mb-8">
+                <h2 id="newsletter-title" class="text-4xl sm:text-6xl lg:text-[7rem] leading-[1.05] text-white font-bold tracking-tight mb-8">
                     Sigue<br>
                     <em class="font-serif italic text-rose-500 font-normal">curioseando.</em>
                 </h2>
@@ -28,7 +28,7 @@
                     <label for="nl-email" class="text-xs font-mono tracking-widest text-neutral-500 uppercase block mb-2">Tu correo</label>
                     <div class="relative border-b border-white/20 group-hover:border-rose-500 transition-colors duration-500">
                         <input id="nl-email" name="email" type="email" placeholder="hola@correo.com" autocomplete="email" required
-                            class="w-full bg-transparent border-0 text-2xl lg:text-3xl font-serif italic text-white placeholder-neutral-700 py-4 focus:ring-0 focus:outline-none pr-32"
+                            class="w-full bg-transparent border-0 text-2xl lg:text-3xl font-serif italic text-white placeholder-neutral-700 py-4 focus:ring-0 focus:outline-none pr-24 sm:pr-32"
                         >
                         <button type="submit" class="absolute right-0 bottom-4 flex items-center gap-3 text-xs uppercase tracking-[0.2em] font-bold text-white hover:text-rose-500 transition-colors cursor-pointer">
                             UNIRME

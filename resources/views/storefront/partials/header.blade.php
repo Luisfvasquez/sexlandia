@@ -14,10 +14,10 @@
         ];
     } else {
         $nav = [
+            ['CATÁLOGO', route('storefront.catalog')],
             ['TIENDA', $navBase . '#productos'],
             ['DESTACADO', $navBase . '#destacado'],
             ['COLECCIÓN', $navBase . '#album-coleccion'],
-            ['CATEGORÍAS', $navBase . '#categorias'],
             ['NOSOTROS', route('nosotros')],
             ['VISÍTANOS', route('contacto')],
         ];
@@ -83,10 +83,12 @@
         </div>
     </div>
 
-    {{-- Mobile Menu --}}
-    <div x-show="mobileMenuOpen" x-cloak class="fixed inset-0 z-[100] lg:hidden flex">
+    {{-- Mobile Menu (teleport a <body>: el <header> tiene backdrop-filter y sería
+         el bloque contenedor de un elemento fixed, colapsándolo a su altura) --}}
+    <template x-teleport="body">
+    <div x-show="mobileMenuOpen" x-cloak @keydown.escape.window="mobileMenuOpen = false" class="fixed inset-0 z-[200] lg:hidden flex">
         <div x-show="mobileMenuOpen" x-transition.opacity.duration.300ms class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="mobileMenuOpen = false"></div>
-        <div x-show="mobileMenuOpen" 
+        <div x-show="mobileMenuOpen"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="translate-x-full"
              x-transition:enter-end="translate-x-0"
@@ -94,7 +96,7 @@
              x-transition:leave-start="translate-x-0"
              x-transition:leave-end="translate-x-full"
              class="relative ml-auto w-full max-w-sm h-full bg-ink border-l border-white/10 shadow-2xl flex flex-col">
-            
+
             <div class="flex items-center justify-between p-6 border-b border-white/5">
                 <span class="text-xs tracking-[0.3em] font-bold text-rose-500 uppercase">Menú</span>
                 <button type="button" @click="mobileMenuOpen = false" class="text-neutral-400 hover:text-white">
@@ -141,4 +143,5 @@
             </div>
         </div>
     </div>
+    </template>
 </header>

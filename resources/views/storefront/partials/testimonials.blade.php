@@ -17,7 +17,7 @@
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">
                     LO QUE DICEN NUESTROS CLIENTES
                 </p>
-                <h2 id="testimonials-title" class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h2 id="testimonials-title" class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     Curiosidad<br>
                     <em class="font-serif italic text-rose-500 font-normal">sin arrepentimientos.</em>
                 </h2>

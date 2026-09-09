@@ -11,7 +11,8 @@
     $inStock = ! $featured->track_inventory
         || $featured->allow_negative_stock
         || ($featured->inventory && $featured->inventory->stock > 0);
-    $waText = rawurlencode('Hola ' . config('site.brand.name') . ', quiero consultar por: ' . $featured->name);
+    $waText = rawurlencode('Hola ' . config('site.brand.name') . ', quiero consultar por: ' . $featured->name . ' → ' . $featured->public_url);
+    $featuredUrl = route('storefront.product', $featured->slug);
 @endphp
 <section id="destacado" class="relative min-h-[100dvh] flex items-center py-24 lg:py-0 bg-ink border-t border-white/5 overflow-hidden" aria-labelledby="destacado-title">
     {{-- Glow sutil de fondo --}}
@@ -25,7 +26,7 @@
                 <p class="text-rose-600 text-xs tracking-[0.3em] uppercase font-bold">
                     Destacado de Temporada
                 </p>
-                <h2 id="destacado-title" class="text-5xl lg:text-6xl text-white font-bold tracking-tight leading-[1.05]">
+                <h2 id="destacado-title" class="text-4xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight leading-[1.05]">
                     Diseñado<br>para <em class="font-serif italic text-rose-500 font-normal">desearlo.</em>
                 </h2>
             </div>
@@ -35,18 +36,18 @@
                 {{-- Glow trasero en lugar de sombra --}}
                 <div class="absolute -inset-10 bg-rose-500/10 blur-[80px] rounded-full pointer-events-none"></div>
                 
-                <div class="relative w-full aspect-[4/5] bg-black border border-white/10 overflow-hidden">
+                <a href="{{ $featuredUrl }}" class="relative block w-full aspect-[4/5] bg-black border border-white/10 overflow-hidden" aria-label="Ver {{ $featured->name }}">
                     {{-- Overlay misterioso que desaparece en hover --}}
                     <div class="absolute inset-0 bg-ink/40 group-hover:bg-transparent transition-colors duration-700 pointer-events-none z-10"></div>
-                    
-                    <x-sl.product-media 
-                        :product="$featured" 
-                        size="full" 
-                        class="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-105" 
-                        data-featured-main 
-                        alt="{{ $featured->name }}" 
+
+                    <x-sl.product-media
+                        :product="$featured"
+                        size="full"
+                        class="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-105"
+                        data-featured-main
+                        alt="{{ $featured->name }}"
                     />
-                </div>
+                </a>
             </div>
 
             {{-- Columna 3: Detalles y CTA (4/12) --}}
@@ -57,7 +58,7 @@
                         {{ config('site.brand.name') }} Selección · {{ $featured->category->name ?? 'Colección' }}
                     </p>
                     <h3 class="text-3xl lg:text-4xl text-white font-serif italic mb-4 leading-tight">
-                        {{ $featured->name }}
+                        <a href="{{ $featuredUrl }}" class="hover:text-rose-400 transition-colors">{{ $featured->name }}</a>
                     </h3>
                     <p class="text-neutral-400 font-light text-sm leading-relaxed">
                         {{ $featured->description ?: 'Una pieza destacada de nuestra colección oficial, rigurosamente seleccionada y disponible hoy en tienda.' }}

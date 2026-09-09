@@ -35,3 +35,10 @@ Schedule::command('exchange:update-usd')
     ->onFailure(function () {
         Log::info('No se pudo actualizar la tasa de cambio');
     });
+
+// Poda de la tabla de auditoría para que no crezca sin límite.
+Schedule::command('audits:prune')
+    ->weeklyOn(1, '3:30') // Lunes 3:30 AM
+    ->timezone('America/Caracas')
+    ->withoutOverlapping()
+    ->onOneServer();

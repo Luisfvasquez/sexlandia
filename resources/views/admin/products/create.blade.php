@@ -5,11 +5,11 @@
 @section('content')
     <div>
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">
+            <h1 class="text-3xl font-bold text-cream">
                 Crear Nuevo Producto
             </h1>
             <a href="{{ route('admin.products.index') }}"
-                class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-chocolate text-white rounded-lg hover:bg-white/10 transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -17,15 +17,15 @@
             </a>
         </div>
         @if ($errors->any())
-            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-sm">
+            <div class="mb-6 bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-lg shadow-sm">
                 <div class="flex items-center mb-2">
-                    <svg class="w-6 h-6 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-rose-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <h3 class="text-red-800 font-bold text-lg">¡No se pudo guardar el producto!</h3>
+                    <h3 class="text-rose-300 font-bold text-lg">¡No se pudo guardar el producto!</h3>
                 </div>
-                <ul class="list-disc list-inside text-red-600 text-sm ml-8 space-y-1">
+                <ul class="list-disc list-inside text-rose-300 text-sm ml-8 space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -38,21 +38,21 @@
 
             {{-- Notificación si no hay tasa de cambio --}}
             @if (!$exchangeRate)
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-                    <p class="text-red-700"><strong>¡Atención!</strong> No hay una tasa de cambio activa. El equivalente en
+                <div class="bg-rose-500/10 border-l-4 border-rose-500 p-4 mb-4">
+                    <p class="text-rose-300"><strong>¡Atención!</strong> No hay una tasa de cambio activa. El equivalente en
                         Bs no se mostrará correctamente.</p>
                 </div>
             @endif
 
             {{-- Sección: Imágenes del Producto --}}
-            <div class="bg-white p-6 rounded-xl shadow" x-data="imageUploader()">
-                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Imágenes del Producto</h2>
+            <div class="bg-chocolate p-6 rounded-xl shadow" x-data="imageUploader()">
+                <h2 class="text-xl font-semibold text-cream/90 mb-4 border-b pb-2">Imágenes del Producto</h2>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Subir Imágenes (JPG, PNG o WEBP)</label>
+                    <label class="block text-sm font-medium text-cream/90 mb-1">Subir Imágenes (JPG, PNG o WEBP)</label>
                     <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp"
                         x-ref="fileInput" @change="handleFiles($event)"
-                        class="w-full rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500">
-                    <p class="text-xs text-gray-500 mt-1">
+                        class="w-full rounded-lg border border-white/15 p-2 focus:border-wine focus:ring-wine">
+                    <p class="text-xs text-cream/60 mt-1">
                         Hasta 6 imágenes · máx 8&nbsp;MB c/u · mínimo 400&times;400&nbsp;px.
                         Se convierten a <strong>WebP</strong> y se generan 3 tamaños (detalle, catálogo, miniatura).
                         La primera es la principal.
@@ -60,7 +60,7 @@
 
                     {{-- Errores de validación de cliente --}}
                     <template x-if="errors.length">
-                        <ul class="mt-2 text-xs text-red-600 list-disc list-inside space-y-0.5">
+                        <ul class="mt-2 text-xs text-rose-300 list-disc list-inside space-y-0.5">
                             <template x-for="err in errors" :key="err"><li x-text="err"></li></template>
                         </ul>
                     </template>
@@ -68,13 +68,13 @@
                     {{-- Previsualización de miniaturas --}}
                     <div class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3" x-show="previews.length" x-cloak>
                         <template x-for="(p, i) in previews" :key="p.id">
-                            <div class="relative group border rounded-lg overflow-hidden bg-gray-50">
+                            <div class="relative group border rounded-lg overflow-hidden bg-white/5">
                                 <img :src="p.url" class="h-24 w-full object-cover" :alt="p.name">
                                 <span x-show="i === 0"
-                                    class="absolute top-1 left-1 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">PRINCIPAL</span>
+                                    class="absolute top-1 left-1 bg-wine text-white text-[9px] font-bold px-1.5 py-0.5 rounded">PRINCIPAL</span>
                                 <button type="button" @click="removeAt(i)"
-                                    class="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
-                                <span class="block text-[10px] text-gray-500 truncate px-1 py-0.5" x-text="p.size"></span>
+                                    class="absolute top-1 right-1 bg-ink/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
+                                <span class="block text-[10px] text-cream/60 truncate px-1 py-0.5" x-text="p.size"></span>
                             </div>
                         </template>
                     </div>
@@ -156,15 +156,15 @@
                 </script>
 
             {{-- Sección: Información General --}}
-            <div class="bg-white p-6 rounded-xl shadow">
-                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Información General</h2>
+            <div class="bg-chocolate p-6 rounded-xl shadow">
+                <h2 class="text-xl font-semibold text-cream/90 mb-4 border-b pb-2">Información General</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+                        <label class="block text-sm font-medium text-cream/90 mb-1">Categoría</label>
                         <div class="flex gap-2 items-center">
                             <select name="category_id" id="category_select" x-model="categoryId" @change="generateSku"
-                                required class="w-full rounded-lg border-gray-300 focus:border-blue-500">
+                                required class="w-full rounded-lg border-white/15 focus:border-wine">
                                 <option value="">Seleccione una categoría</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" data-name="{{ $category->name }}">
@@ -174,7 +174,7 @@
 
                             {{-- Botón para abrir modal --}}
                             <button type="button" @click="showCategoryModal = true"
-                                class="p-2.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="p-2.5 bg-wine/10 text-blush border border-wine/25 rounded-lg hover:bg-wine/15 hover:border-wine/30 transition-colors focus:outline-none focus:ring-2 focus:ring-wine"
                                 title="Crear nueva categoría">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -185,59 +185,59 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del Producto</label>
+                        <label class="block text-sm font-medium text-cream/90 mb-1">Nombre del Producto</label>
                         <input type="text" name="name" x-model="name" @input.debounce.500ms="generateSku" required
-                            class="w-full rounded-lg border-gray-300 focus:border-blue-500"
+                            class="w-full rounded-lg border-white/15 focus:border-wine"
                             oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s\-\.]/g, '')"
                             title="Solo se permiten letras, números y espacios">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">SKU (Auto-generado / Editable)</label>
+                        <label class="block text-sm font-medium text-cream/90 mb-1">SKU (Auto-generado / Editable)</label>
                         <input type="text" name="sku" x-model="sku" required
-                            class="w-full rounded-lg border-gray-300 bg-yellow-50 focus:border-blue-500"
+                            class="w-full rounded-lg border-white/15 bg-amber-500/10 focus:border-wine"
                             oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-_]/g, '').toUpperCase()"
                             title="Solo letras, números, guiones y guiones bajos">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cód. Barras (Pistola escáner)</label>
+                        <label class="block text-sm font-medium text-cream/90 mb-1">Cód. Barras (Pistola escáner)</label>
                         <input type="text" name="sku_barcode" @keydown.enter.prevent="" required
-                            class="w-full rounded-lg border-gray-300 bg-blue-50 focus:bg-white transition-colors" autofocus
+                            class="w-full rounded-lg border-white/15 bg-wine/10 focus:bg-chocolate transition-colors" autofocus
                             oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-]/g, '')"
                             title="Solo letras, números y guiones (código de barras)">
                     </div>
 
                     {{-- Añadidos Marca y Descripción --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                        <label class="block text-sm font-medium text-cream/90 mb-1">Marca</label>
                         <input type="text" name="brand" value="{{ old('brand') }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-blue-500"
+                            class="w-full rounded-lg border-white/15 focus:border-wine"
                             oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s\-\.]/g, '')"
                             title="Solo letras, números y espacios">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                        <textarea name="description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-blue-500">{{ old('description') }}</textarea>
+                        <label class="block text-sm font-medium text-cream/90 mb-1">Descripción</label>
+                        <textarea name="description" rows="3" class="w-full rounded-lg border-white/15 focus:border-wine">{{ old('description') }}</textarea>
                     </div>
                 </div>
             </div>
 
             {{-- Sección: Costos en USD con conversión a Bs y Lógica de Pesables --}}
-            <div class="bg-white p-6 rounded-xl shadow">
+            <div class="bg-chocolate p-6 rounded-xl shadow">
                 <div class="flex justify-between items-center mb-4 border-b pb-2">
-                    <h2 class="text-xl font-semibold text-gray-700">Configuración Base (USD)</h2>
-                    <span class="bg-gray-800 text-white text-xs px-2 py-1 rounded">Tasa Actual: Bs. <span
+                    <h2 class="text-xl font-semibold text-cream/90">Configuración Base (USD)</h2>
+                    <span class="bg-chocolate text-white text-xs px-2 py-1 rounded">Tasa Actual: Bs. <span
                             x-text="rate"></span></span>
                 </div>
 
                 {{-- Selector de tipo de unidad --}}
-                <div class="mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
-                    <label class="block text-sm font-bold text-blue-800 mb-1">¿Cómo se mide este producto en su mínima
+                <div class="mb-4 bg-wine/10 p-3 rounded-lg border border-wine/20">
+                    <label class="block text-sm font-bold text-blush mb-1">¿Cómo se mide este producto en su mínima
                         expresión?</label>
                     <select x-model="measureType"
-                        class="w-full md:w-1/3 rounded-lg border-blue-300 text-sm focus:ring-blue-500 bg-white">
+                        class="w-full md:w-1/3 rounded-lg border-wine/30 text-sm focus:ring-wine bg-chocolate">
                         <option value="unit">Por Unidad / Pieza (Ej: 1 Refresco, 1 Empaque)</option>
                         <option value="gram">Pesable en Gramos (Ej: Queso, Carne, Vegetales)</option>
                     </select>
@@ -247,43 +247,43 @@
 
                     {{-- Costo Visual (Lo que teclea el humano) --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <label class="block text-sm font-medium text-cream/90 mb-1">
                             Costo Compra <span x-text="measureType === 'gram' ? 'por KILO' : 'por UNIDAD'"
-                                class="font-bold text-indigo-600"></span> (USD)
+                                class="font-bold text-blush"></span> (USD)
                         </label>
                         <div class="relative">
                             <input type="number" step="0.01" min="0" x-model="displayCost" @blur="calculatePrice" required
-                                class="w-full rounded-lg border-gray-300 pr-20"
+                                class="w-full rounded-lg border-white/15 pr-20"
                                 inputmode="decimal"
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                 title="Solo números positivos">
-                            <span class="absolute right-3 top-2.5 text-gray-500 text-sm font-bold">(Bs <span
+                            <span class="absolute right-3 top-2.5 text-cream/60 text-sm font-bold">(Bs <span
                                     x-text="getBs(displayCost)"></span>)</span>
                         </div>
                     </div>
 
                     {{-- Precio Visual (Lo que teclea el humano) --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <label class="block text-sm font-medium text-cream/90 mb-1">
                             Precio Venta <span x-text="measureType === 'gram' ? 'por KILO' : 'por UNIDAD'"
-                                class="font-bold text-indigo-600"></span> (USD)
-                            <span class="text-xs text-green-600 font-bold ml-2">+30% Auto</span>
+                                class="font-bold text-blush"></span> (USD)
+                            <span class="text-xs text-emerald-400 font-bold ml-2">+30% Auto</span>
                         </label>
                         <div class="relative">
                             <input type="number" step="0.01" min="0" x-model="displayPrice" required
-                                class="w-full rounded-lg border-gray-300 pr-20 border-green-300 focus:ring-green-500"
+                                class="w-full rounded-lg border-white/15 pr-20 border-emerald-500/30 focus:ring-emerald-500"
                                 inputmode="decimal"
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                 title="Solo números positivos">
-                            <span class="absolute right-3 top-2.5 text-green-700 text-sm font-bold">(Bs <span
+                            <span class="absolute right-3 top-2.5 text-emerald-300 text-sm font-bold">(Bs <span
                                     x-text="getBs(displayPrice)"></span>)</span>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad Mínima Alerta</label>
+                        <label class="block text-sm font-medium text-cream/90 mb-1">Cantidad Mínima Alerta</label>
                         <input type="number" name="minimum_stock" value="5" min="0" step="1" required
-                            class="w-full rounded-lg border-gray-300"
+                            class="w-full rounded-lg border-white/15"
                             inputmode="numeric"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                             title="Solo números enteros positivos">
@@ -298,25 +298,25 @@
             </div>
 
             {{-- Sección: Presentaciones --}}
-            <div class="bg-white p-6 rounded-xl shadow">
+            <div class="bg-chocolate p-6 rounded-xl shadow">
                 {{-- Sección: Presentaciones Dinámicas desde BD --}}
-                <div class="bg-white p-6 rounded-xl shadow">
+                <div class="bg-chocolate p-6 rounded-xl shadow">
                     <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h2 class="text-xl font-semibold text-gray-700">Presentaciones Especiales</h2>
+                        <h2 class="text-xl font-semibold text-cream/90">Presentaciones Especiales</h2>
                         <button type="button" @click="addPresentation()"
-                            class="text-sm bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700">
+                            class="text-sm bg-wine text-white px-3 py-1 rounded-lg hover:bg-wine-dark">
                             + Agregar Presentación
                         </button>
                     </div>
 
                     <div class="space-y-4">
                         <template x-for="(item, index) in presentations" :key="index">
-                            <div class="grid grid-cols-1 md:grid-cols-7 gap-3 p-4 border rounded-xl bg-gray-50 items-end">
+                            <div class="grid grid-cols-1 md:grid-cols-7 gap-3 p-4 border rounded-xl bg-white/5 items-end">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Tipo</label>
+                                    <label class="block text-xs font-bold text-cream/60">Tipo</label>
                                     {{-- Select alimentado por el array dinámico de Alpine --}}
                                     <select :name="`presentations[${index}][bulk_type_id]`" x-model="item.bulk_type_id"
-                                        class="w-full mt-1 rounded-lg border-gray-300 text-sm">
+                                        class="w-full mt-1 rounded-lg border-white/15 text-sm">
                                         <option value="">Seleccione...</option>
                                         <template x-for="type in dbBulkTypes" :key="type.id">
                                             <option :value="type.id" x-text="type.name"></option>
@@ -324,17 +324,17 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Nombre Base</label>
+                                    <label class="block text-xs font-bold text-cream/60">Nombre Base</label>
                                     <input type="text" :name="`presentations[${index}][name]`"
                                         placeholder="Ej: Harina Pan"
-                                        class="w-full mt-1 rounded-lg border-gray-300 text-sm" required
+                                        class="w-full mt-1 rounded-lg border-white/15 text-sm" required
                                         oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s\-\.]/g, '')"
                                         title="Solo letras, números y espacios">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Unidades/Gramos</label>
+                                    <label class="block text-xs font-bold text-cream/60">Unidades/Gramos</label>
                                     <input type="number" step="0.01" min="0" :name="`presentations[${index}][quantity]`"
-                                        class="w-full mt-1 rounded-lg border-gray-300 text-sm" required
+                                        class="w-full mt-1 rounded-lg border-white/15 text-sm" required
                                         inputmode="decimal"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                         title="Solo números positivos">
@@ -342,45 +342,45 @@
 
                                 {{-- Costos y Precios con conversión dinámica a USD --}}
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Costo (USD)</label>
+                                    <label class="block text-xs font-bold text-cream/60">Costo (USD)</label>
                                     <div class="relative">
                                         <input type="number" step="0.01" min="0"
                                             :name="`presentations[${index}][purchase_price]`" x-model="item.purchase_price"
                                             @blur="item.sale_price = (item.purchase_price * 1.30).toFixed(2)"
-                                            class="w-full mt-1 rounded-lg border-gray-300 text-sm pr-12" required
+                                            class="w-full mt-1 rounded-lg border-white/15 text-sm pr-12" required
                                             inputmode="decimal"
                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                             title="Solo números positivos">
-                                        <span class="absolute right-2 top-2.5 text-xs text-gray-500 font-bold">(Bs <span
+                                        <span class="absolute right-2 top-2.5 text-xs text-cream/60 font-bold">(Bs <span
                                                 x-text="getBs(item.purchase_price)"></span>)</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Venta (USD)</label>
+                                    <label class="block text-xs font-bold text-cream/60">Venta (USD)</label>
                                     <div class="relative">
                                         <input type="number" step="0.01" min="0" :name="`presentations[${index}][sale_price]`"
                                             x-model="item.sale_price"
-                                            class="w-full mt-1 rounded-lg border-gray-300 text-sm pr-12 border-green-300"
+                                            class="w-full mt-1 rounded-lg border-white/15 text-sm pr-12 border-emerald-500/30"
                                             required
                                             inputmode="decimal"
                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')"
                                             title="Solo números positivos">
-                                        <span class="absolute right-2 top-2.5 text-xs text-green-700 font-bold">(Bs <span
+                                        <span class="absolute right-2 top-2.5 text-xs text-emerald-300 font-bold">(Bs <span
                                                 x-text="getBs(item.sale_price)"></span>)</span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500">Cód. Barras</label>
+                                    <label class="block text-xs font-bold text-cream/60">Cód. Barras</label>
                                     <input type="text" :name="`presentations[${index}][sku_barcode]`"
                                         @keydown.enter.prevent=""
-                                        class="w-full mt-1 rounded-lg border-gray-300 text-sm bg-blue-50" required
+                                        class="w-full mt-1 rounded-lg border-white/15 text-sm bg-wine/10" required
                                         oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-]/g, '')"
                                         title="Solo letras, números y guiones (código de barras)">
                                 </div>
                                 <div class="text-right">
                                     <button type="button" @click="removePresentation(index)"
-                                        class="text-red-600 font-bold text-sm mb-2 hover:text-red-800">X</button>
+                                        class="text-rose-300 font-bold text-sm mb-2 hover:text-rose-300">X</button>
                                     <input type="hidden" :name="`presentations[${index}][sku]`"
                                         :value="`${sku}-B${index+1}`">
                                 </div>
@@ -393,8 +393,8 @@
             <div class="flex justify-end pb-10">
                 <button type="submit" x-bind:disabled="isSubmitting"
                     x-text="isSubmitting ? 'Procesando Producto...' : 'Guardar Producto Completo'"
-                    :class="isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
-                    class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg transform transition-all hover:-translate-y-1">
+                    :class="isSubmitting ? 'bg-white/20 cursor-not-allowed' : 'bg-wine hover:bg-wine-dark'"
+                    class="bg-wine text-white px-8 py-3 rounded-xl font-bold shadow-lg transform transition-all hover:-translate-y-1">
                 </button>
             </div>
             {{-- Modal Nueva Categoría --}}
@@ -403,37 +403,37 @@
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     {{-- Fondo oscuro --}}
                     <div x-show="showCategoryModal" x-transition.opacity
-                        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                        class="fixed inset-0 bg-white/25 bg-opacity-75 transition-opacity"
                         @click="showCategoryModal = false"></div>
 
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                     {{-- Contenedor del Modal --}}
                     <div x-show="showCategoryModal" x-transition
-                        class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <h3 class="text-lg leading-6 font-bold text-gray-900 mb-4" id="modal-title">Crear Nueva
+                        class="inline-block align-bottom bg-chocolate rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div class="bg-chocolate px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <h3 class="text-lg leading-6 font-bold text-bone mb-4" id="modal-title">Crear Nueva
                                 Categoría</h3>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Categoría</label>
+                                <label class="block text-sm font-medium text-cream/90 mb-1">Nombre de la Categoría</label>
                                 <input type="text" x-model="newCategoryName" placeholder="Ej: Lácteos"
-                                    class="w-full rounded-lg border-gray-300 focus:border-blue-500"
+                                    class="w-full rounded-lg border-white/15 focus:border-wine"
                                     @keydown.enter.prevent="saveCategory()"
                                     oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s\-\.]/g, '')"
                                     title="Solo letras y espacios">
                                 <p x-show="categoryError" x-text="categoryError"
-                                    class="text-red-500 text-sm mt-2 font-medium"></p>
+                                    class="text-rose-400 text-sm mt-2 font-medium"></p>
                             </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t">
+                        <div class="bg-white/5 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t">
                             <button type="button" @click="saveCategory()" :disabled="isSavingCategory"
-                                class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                                class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-wine text-base font-medium text-white hover:bg-wine-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-wine sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
                                 <span x-show="!isSavingCategory">Guardar y Seleccionar</span>
                                 <span x-show="isSavingCategory">Guardando...</span>
                             </button>
                             <button type="button"
                                 @click="showCategoryModal = false; newCategoryName = ''; categoryError = ''"
-                                class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                class="mt-3 w-full inline-flex justify-center rounded-lg border border-white/15 shadow-sm px-4 py-2 bg-chocolate text-base font-medium text-cream/90 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-wine sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                                 Cancelar
                             </button>
                         </div>

@@ -38,7 +38,8 @@ class ClientPanelController extends Controller
                 'user_id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'identification' => 'CI-'.rand(10000000, 30000000),
+                // Identificador determinista y único (evita colisiones de rand()).
+                'identification' => $user->dni ?: 'CI-U'.$user->id,
                 'phone_number' => $user->phone_number ?? '',
                 'address' => '',
                 'is_active' => true,
@@ -167,6 +168,43 @@ class ClientPanelController extends Controller
         $client = Auth::check() && Auth::user()->hasRole('client') ? $this->getClient() : null;
 
         return view('storefront.pages.catalogo', compact('products', 'categories', 'client'));
+    }
+
+    /**
+     * Ficha pública de un producto (resuelto por slug), con su galería completa
+     * y una selección de productos similares.
+     */
+    public function productShow(Product $product)
+    {
+        abort_unless($product->status === 'active', 404);
+
+        $product->load(['category', 'inventory', 'images', 'bulks']);
+
+        $similar = Product::with(['category', 'inventory', 'images'])
+            ->where('status', 'active')
+            ->where('id', '!=', $product->id)
+            ->when($product->category_id, fn ($q) => $q->where('category_id', $product->category_id))
+            ->orderByDesc('id')
+            ->take(4)
+            ->get();
+
+        // Completa hasta 4 con otros productos si la categoría tiene pocos.
+        if ($similar->count() < 4) {
+            $fill = Product::with(['category', 'inventory', 'images'])
+                ->where('status', 'active')
+                ->where('id', '!=', $product->id)
+                ->whereNotIn('id', $similar->pluck('id'))
+                ->inRandomOrder()
+                ->take(4 - $similar->count())
+                ->get();
+
+            $similar = $similar->concat($fill);
+        }
+
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $client = Auth::check() && Auth::user()->hasRole('client') ? $this->getClient() : null;
+
+        return view('storefront.pages.producto', compact('product', 'similar', 'categories', 'client'));
     }
 
     /**
@@ -305,7 +343,7 @@ class ClientPanelController extends Controller
             // 3. Procesar el comprobante de pago subido
             if ($request->hasFile('payment_proof')) {
                 $file = $request->file('payment_proof');
-                $path = $file->store('receipts', 'public');
+                $path = $file->store('receipts', 'local');
 
                 $proof = PaymentProof::create([
                     'order_id' => $order->id,
@@ -317,7 +355,7 @@ class ClientPanelController extends Controller
 
                 $proof->images()->create([
                     'path' => $path,
-                    'disk' => 'public',
+                    'disk' => 'local',
                     'original_name' => $file->getClientOriginalName(),
                     'mime_type' => $file->getMimeType(),
                     'size' => $file->getSize(),
@@ -428,9 +466,9 @@ class ClientPanelController extends Controller
 
             $order = $account->order;
 
-            // 1. Guardar la imagen del comprobante
+            // 1. Guardar la imagen del comprobante (disco privado)
             $file = $request->file('payment_proof');
-            $path = $file->store('receipts', 'public');
+            $path = $file->store('receipts', 'local');
 
             // 2. Crear el registro PaymentProof (Para visualizar la imagen en el panel admin)
             $proof = PaymentProof::create([
@@ -443,7 +481,7 @@ class ClientPanelController extends Controller
 
             $proof->images()->create([
                 'path' => $path,
-                'disk' => 'public',
+                'disk' => 'local',
                 'original_name' => $file->getClientOriginalName(),
                 'mime_type' => $file->getMimeType(),
                 'size' => $file->getSize(),

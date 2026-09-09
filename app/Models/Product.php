@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\CurrencyService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,8 +15,6 @@ class Product extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
-
-    protected $guarded = [];
 
     protected $fillable = [
         'category_id',
@@ -51,7 +50,17 @@ class Product extends Model implements Auditable
         'display_price',
         'display_price_bs',
         'unit_label',
+        'public_url',
     ];
+
+    /**
+     * URL pública (canónica) de la ficha del producto, con el dominio real del
+     * sitio (config/site.php → url). Se usa para SEO y para compartir por WhatsApp.
+     */
+    public function getPublicUrlAttribute(): string
+    {
+        return rtrim(config('site.url'), '/').'/product/'.$this->slug;
+    }
 
     /**
      * Precio "display" (USD) convertido a bolívares con la tasa activa.
@@ -59,7 +68,7 @@ class Product extends Model implements Auditable
      */
     public function getDisplayPriceBsAttribute(): float
     {
-        return app(\App\Services\CurrencyService::class)->toBs($this->display_price);
+        return app(CurrencyService::class)->toBs($this->display_price);
     }
 
     /**
@@ -67,7 +76,7 @@ class Product extends Model implements Auditable
      */
     public function getDisplayCostBsAttribute(): float
     {
-        return app(\App\Services\CurrencyService::class)->toBs($this->display_cost);
+        return app(CurrencyService::class)->toBs($this->display_cost);
     }
 
     /**

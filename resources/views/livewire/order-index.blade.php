@@ -19,17 +19,17 @@
 <div>
     {{-- Panel de Métricas / Resumen Financiero Histórico --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div class="bg-white p-6 rounded-xl shadow border-l-4 border-green-500">
-            <h2 class="text-gray-500 text-sm font-medium uppercase">Órdenes Completadas</h2>
-            <p class="text-2xl font-bold text-green-600">{{ $completedCount }}</p>
+        <div class="bg-chocolate p-6 rounded-xl shadow border-l-4 border-emerald-500">
+            <h2 class="text-cream/60 text-sm font-medium uppercase">Órdenes Completadas</h2>
+            <p class="text-2xl font-bold text-emerald-400">{{ $completedCount }}</p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow border-l-4 border-yellow-500">
-            <h2 class="text-gray-500 text-sm font-medium uppercase">Órdenes en Proceso</h2>
-            <p class="text-2xl font-bold text-yellow-600">{{ $processingCount }}</p>
+        <div class="bg-chocolate p-6 rounded-xl shadow border-l-4 border-amber-500">
+            <h2 class="text-cream/60 text-sm font-medium uppercase">Órdenes en Proceso</h2>
+            <p class="text-2xl font-bold text-amber-300">{{ $processingCount }}</p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow border-l-4 border-red-500">
-            <h2 class="text-gray-500 text-sm font-medium uppercase">Órdenes Rechazadas / Canceladas</h2>
-            <p class="text-2xl font-bold text-red-600">{{ $rejectedCount }}</p>
+        <div class="bg-chocolate p-6 rounded-xl shadow border-l-4 border-rose-500">
+            <h2 class="text-cream/60 text-sm font-medium uppercase">Órdenes Rechazadas / Canceladas</h2>
+            <p class="text-2xl font-bold text-rose-300">{{ $rejectedCount }}</p>
         </div>
     </div>
 
@@ -37,51 +37,51 @@
     <div class="mb-4 flex items-center">
         <input type="text" wire:model.live.debounce.300ms="search"
             placeholder="Buscar por número de orden, RIF o cliente..."
-            class="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            class="w-full md:w-1/3 px-4 py-2 border border-white/15 rounded-lg shadow-sm focus:ring-wine focus:border-wine">
 
-        <div wire:loading wire:target="search" class="text-sm text-gray-500 ml-2">
+        <div wire:loading wire:target="search" class="text-sm text-cream/60 ml-2">
             Buscando...
         </div>
     </div>
 
     {{-- Tabla de Órdenes --}}
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden relative">
+    <div class="bg-chocolate rounded-xl shadow-sm overflow-hidden relative">
         {{-- Loader para la reactividad --}}
-        <div wire:loading.delay class="absolute inset-0 bg-white bg-opacity-70 z-10 flex items-center justify-center">
-            <span class="text-gray-600 font-semibold">Cargando datos...</span>
+        <div wire:loading.delay class="absolute inset-0 bg-chocolate bg-opacity-70 z-10 flex items-center justify-center">
+            <span class="text-cream/70 font-semibold">Cargando datos...</span>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-white/10">
+                <thead class="bg-white/5">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Orden</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Cliente</th>
-                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Estado</th>
-                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Pago</th>
-                        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Total (USD)</th>
-                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Acciones</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-cream/60 uppercase">Orden</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-cream/60 uppercase">Cliente</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-cream/60 uppercase">Estado</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-cream/60 uppercase">Pago</th>
+                        <th class="px-6 py-3 text-right text-xs font-bold text-cream/60 uppercase">Total (USD)</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-cream/60 uppercase">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody class="divide-y divide-white/10">
                     @forelse($orders as $order)
-                        <tr wire:key="order-{{ $order->id }}" x-data="{ openModal: false }" class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap font-mono font-bold text-indigo-600">
+                        <tr wire:key="order-{{ $order->id }}" x-data="{ openModal: false }" class="hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap font-mono font-bold text-blush">
                                 {{ $order->order_number }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-bold text-gray-900">{{ $order->client->name ?? 'Invitado' }}</div>
-                                <div class="text-xs text-gray-500">{{ $order->client->identification ?? 'N/A' }}</div>
+                                <div class="text-sm font-bold text-bone">{{ $order->client->name ?? 'Invitado' }}</div>
+                                <div class="text-xs text-cream/60">{{ $order->client->identification ?? 'N/A' }}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold
                                     {{ $order->status == 'completed' || $order->status == 'delivered'
-                                        ? 'bg-green-100 text-green-700'
+                                        ? 'bg-emerald-500/15 text-emerald-300'
                                         : ($order->status == 'pending'
-                                            ? 'bg-yellow-100 text-yellow-700'
+                                            ? 'bg-amber-500/15 text-amber-300'
                                             : ($order->status == 'ready_for_pickup'
-                                                ? 'bg-indigo-100 text-indigo-700'
-                                                : 'bg-gray-100 text-gray-600')) }}">
+                                                ? 'bg-wine/15 text-blush'
+                                                : 'bg-white/5 text-cream/70')) }}">
                                     {{ $statusTranslations[$order->status] ?? ucfirst($order->status) }}
                                 </span>
                             </td>
@@ -89,22 +89,22 @@
                             <td class="px-6 py-4 text-center">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold
                                     {{ $order->payment_status == 'paid'
-                                        ? 'bg-blue-100 text-blue-700'
+                                        ? 'bg-wine/15 text-blush'
                                         : ($order->payment_status == 'partial'
-                                            ? 'bg-orange-100 text-orange-700'
-                                            : 'bg-red-100 text-red-700') }}">
+                                            ? 'bg-amber-500/15 text-amber-200'
+                                            : 'bg-rose-500/15 text-rose-300') }}">
                                     {{ $paymentTranslations[$order->payment_status] ?? ucfirst($order->payment_status) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right font-black text-gray-900">
+                            <td class="px-6 py-4 text-right font-black text-bone">
                                 $ {{ number_format($order->total, 2) }}
                                 @if ($order->exchange_rate)
-                                    <span class="block text-xs font-bold text-gray-400">Bs. {{ number_format($order->total * $order->exchange_rate, 2) }}</span>
+                                    <span class="block text-xs font-bold text-cream/50">Bs. {{ number_format($order->total * $order->exchange_rate, 2) }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center whitespace-nowrap text-sm font-medium space-x-2">
                                 <a href="{{ route('admin.orders.show', $order->id) }}"
-                                    class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-900 font-bold bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors">
+                                    class="inline-flex items-center gap-1 text-blush hover:text-blush font-bold bg-wine/10 hover:bg-wine/15 px-3 py-1.5 rounded-lg transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -115,7 +115,7 @@
                                     Revisar
                                 </a>
                                 <button @click="openModal = true"
-                                    class="inline-flex items-center gap-1 text-gray-600 hover:text-gray-900 font-bold bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-colors">
+                                    class="inline-flex items-center gap-1 text-cream/70 hover:text-bone font-bold bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">
                                     Detalle
                                 </button>
                             </td>
@@ -124,8 +124,8 @@
                             <template x-teleport="body">
                                 <div x-show="openModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
                                     <div class="flex items-center justify-center min-h-screen px-4">
-                                        <div @click="openModal = false" class="fixed inset-0 bg-black opacity-50"></div>
-                                        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full shadow-2xl relative z-10">
+                                        <div @click="openModal = false" class="fixed inset-0 bg-ink opacity-50"></div>
+                                        <div class="bg-chocolate rounded-2xl p-8 max-w-2xl w-full shadow-2xl relative z-10">
                                             <h2 class="text-2xl font-black mb-4">Detalle Orden {{ $order->order_number }}</h2>
 
                                             <div class="border-t border-b py-4 my-4 space-y-2">
@@ -143,13 +143,13 @@
                                                 <span>Total:</span>
                                                 <span>$ {{ number_format($order->total, 2) }}
                                                     @if ($order->exchange_rate)
-                                                        <span class="block text-xs text-gray-400 text-right">Bs. {{ number_format($order->total * $order->exchange_rate, 2) }}</span>
+                                                        <span class="block text-xs text-cream/50 text-right">Bs. {{ number_format($order->total * $order->exchange_rate, 2) }}</span>
                                                     @endif
                                                 </span>
                                             </div>
 
                                             <button @click="openModal = false"
-                                                class="mt-6 w-full bg-gray-800 text-white py-3 rounded-xl font-bold">Cerrar</button>
+                                                class="mt-6 w-full bg-chocolate text-white py-3 rounded-xl font-bold">Cerrar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -157,13 +157,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500 italic">No hay órdenes registradas con este criterio.</td>
+                            <td colspan="6" class="px-6 py-12 text-center text-cream/60 italic">No hay órdenes registradas con este criterio.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div class="px-6 py-4 border-t border-white/10">
             {{ $orders->links() }}
         </div>
     </div>

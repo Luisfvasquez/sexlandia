@@ -81,6 +81,59 @@ class DeliveryModuleTest extends TestCase
         $this->assertEquals('Entregado a cliente en persona.', $order->delivery_notes);
     }
 
+    public function test_delivery_user_cannot_view_a_package_assigned_to_someone_else(): void
+    {
+        /** @var User $mine */
+        $mine = User::factory()->create();
+        $mine->assignRole('delivery');
+
+        /** @var User $other */
+        $other = User::factory()->create();
+        $other->assignRole('delivery');
+
+        $order = Order::create([
+            'uuid' => (string) Str::uuid(),
+            'order_number' => 'ORD-SCOPED-001',
+            'order_type' => 'delivery',
+            'status' => 'in_transit',
+            'payment_status' => 'paid',
+            'client_name' => 'Ana',
+            'client_phone' => '123',
+            'delivery_address' => 'Calle 1',
+            'total' => 10.00,
+            'delivery_user_id' => $other->id,
+        ]);
+
+        $this->actingAs($mine)->get(route('delivery.show', $order->id))->assertNotFound();
+        $this->actingAs($other)->get(route('delivery.show', $order->id))->assertStatus(200);
+    }
+
+    public function test_admin_can_view_any_delivery_package(): void
+    {
+        /** @var User $admin */
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        /** @var User $courier */
+        $courier = User::factory()->create();
+        $courier->assignRole('delivery');
+
+        $order = Order::create([
+            'uuid' => (string) Str::uuid(),
+            'order_number' => 'ORD-SCOPED-002',
+            'order_type' => 'delivery',
+            'status' => 'in_transit',
+            'payment_status' => 'paid',
+            'client_name' => 'Ana',
+            'client_phone' => '123',
+            'delivery_address' => 'Calle 1',
+            'total' => 10.00,
+            'delivery_user_id' => $courier->id,
+        ]);
+
+        $this->actingAs($admin)->get(route('delivery.show', $order->id))->assertStatus(200);
+    }
+
     public function test_delivery_user_can_filter_and_convert_store_pickup_order(): void
     {
         /** @var User $deliveryUser */

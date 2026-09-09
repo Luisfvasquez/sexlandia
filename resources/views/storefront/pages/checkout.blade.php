@@ -17,7 +17,7 @@
         $safeRate = isset($exchangeRate) && $exchangeRate > 0 ? (float) str_replace(',', '.', $exchangeRate) : 1;
     @endphp
 
-    <section class="relative bg-ink border-t border-white/5 overflow-hidden pt-32 pb-24 lg:pb-32" x-data="checkoutManager()" x-init="init()">
+    <section class="relative bg-ink border-t border-white/5 overflow-hidden pt-28 sm:pt-32 pb-24 lg:pb-32" x-data="checkoutManager()" x-init="init()">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(141,38,61,0.08),_transparent_60%)] pointer-events-none"></div>
 
         <div class="relative w-full max-w-5xl mx-auto px-6 lg:px-8">
@@ -26,7 +26,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="transition-transform group-hover:-translate-x-1" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/></svg>
                     Volver al catálogo
                 </a>
-                <h1 class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     Finalizar <em class="font-serif italic text-rose-500 font-normal">compra.</em>
                 </h1>
                 <p class="mt-6 text-neutral-400 font-light text-sm lg:text-base leading-relaxed max-w-xl border-l border-white/10 pl-5">
@@ -81,9 +81,9 @@
                             <input type="hidden" name="latitude" id="input_latitude" value="{{ old('latitude', $client->latitude) }}">
                             <input type="hidden" name="longitude" id="input_longitude" value="{{ old('longitude', $client->longitude) }}">
                             <div class="space-y-2">
-                                <div class="flex items-center justify-between">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                     <label class="block text-neutral-300 font-extrabold text-xs uppercase tracking-wider">📍 Ubicación en el mapa</label>
-                                    <button type="button" id="btn-use-location" class="text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-bold px-3 py-1.5 rounded-lg border border-rose-500/20 transition">🎯 Usar mi ubicación (GPS)</button>
+                                    <button type="button" id="btn-use-location" class="w-full sm:w-auto text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-bold px-3 py-2 sm:py-1.5 rounded-lg border border-rose-500/20 transition">🎯 Usar mi ubicación (GPS)</button>
                                 </div>
                                 <p class="text-xs text-neutral-400">Arrastra el marcador o haz clic en el mapa para fijar tu ubicación.</p>
                                 <div id="checkout-map" class="w-full h-64 rounded-xl border border-white/10 z-10"></div>
@@ -107,7 +107,7 @@
                             </select>
                         </div>
                         <div x-show="methodDescription !== ''" x-transition
-                            class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 text-xs text-rose-200 whitespace-pre-wrap font-mono" x-text="methodDescription"></div>
+                            class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 text-xs text-rose-200 whitespace-pre-wrap break-words font-mono" x-text="methodDescription"></div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                             <div class="space-y-2">

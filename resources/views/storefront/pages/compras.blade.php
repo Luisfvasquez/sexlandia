@@ -11,7 +11,7 @@
         <div class="relative w-full max-w-5xl mx-auto px-6 lg:px-8">
             <div class="mb-12 animate-slide-up-fade">
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">Tu historial</p>
-                <h1 class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     Mis <em class="font-serif italic text-rose-500 font-normal">compras.</em>
                 </h1>
                 <p class="mt-6 text-neutral-400 font-light text-sm lg:text-base leading-relaxed max-w-xl border-l border-white/10 pl-5">
@@ -134,31 +134,31 @@
                                     </div>
                                 @endif
 
-                                <div class="border border-white/10 rounded-xl overflow-hidden">
-                                    <table class="w-full text-left border-collapse">
+                                <div class="border border-white/10 rounded-xl overflow-x-auto">
+                                    <table class="w-full min-w-[420px] text-left border-collapse">
                                         <thead>
                                             <tr class="bg-white/5 text-neutral-500 uppercase text-[10px] font-bold tracking-wider border-b border-white/10">
-                                                <th class="py-3 px-6">Producto</th>
-                                                <th class="py-3 px-6 text-center">Cantidad</th>
+                                                <th class="py-3 px-4 sm:px-6">Producto</th>
+                                                <th class="py-3 px-3 sm:px-6 text-center">Cantidad</th>
                                                 <th class="py-3 px-4 text-right hidden sm:table-cell">Precio unitario</th>
-                                                <th class="py-3 px-6 text-right">Subtotal</th>
+                                                <th class="py-3 px-4 sm:px-6 text-right">Subtotal</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-white/10 text-sm">
                                             @foreach ($order->details as $detail)
                                                 <tr class="hover:bg-white/[0.02]">
-                                                    <td class="py-3 px-6">
+                                                    <td class="py-3 px-4 sm:px-6">
                                                         <span class="font-bold text-white">{{ $detail->product->name }}</span>
                                                         @if ($detail->product->brand)
                                                             <span class="text-[10px] bg-white/5 text-neutral-400 font-bold px-1.5 py-0.5 rounded uppercase ml-1">{{ $detail->product->brand }}</span>
                                                         @endif
                                                     </td>
-                                                    <td class="py-3 px-6 text-center font-bold text-neutral-300">
+                                                    <td class="py-3 px-3 sm:px-6 text-center font-bold text-neutral-300 whitespace-nowrap">
                                                         {{ $detail->product->unit_type === 'gram' ? number_format($detail->quantity, 3, ',', '.') : number_format($detail->quantity, 0) }}
                                                         {{ $detail->product->unit_type === 'gram' ? 'Kg' : 'Und' }}
                                                     </td>
                                                     <td class="py-3 px-4 text-right text-neutral-400 font-mono hidden sm:table-cell">${{ number_format($detail->unit_price, 2, ',', '.') }}</td>
-                                                    <td class="py-3 px-6 text-right font-extrabold text-neutral-200 font-mono">${{ number_format($detail->subtotal, 2, ',', '.') }}</td>
+                                                    <td class="py-3 px-4 sm:px-6 text-right font-extrabold text-neutral-200 font-mono whitespace-nowrap">${{ number_format($detail->subtotal, 2, ',', '.') }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -11,8 +11,26 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                cream: '#f3eee8',
+                wine: '#8d263d',
+                'wine-dark': '#5c1424',
+                chocolate: '#2b1c18',
+                blush: '#d7aaa6',
+                powder: '#e7d1ce',
+                butter: '#e8d5a6',
+                ink: '#171515',
+                bone: '#fbf8f3',
+                /* remapeo: la escala "indigo" heredada (Breeze/admin) → vino SEXLANDIA */
+                indigo: {
+                    50: '#f7edef', 100: '#eed7dc', 200: '#e0b8c0', 300: '#cd8f9c',
+                    400: '#b25f72', 500: '#9c3a4f', 600: '#8d263d',
+                    700: '#5c1424', 800: '#4a1620', 900: '#3a141b', 950: '#250b11',
+                },
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                serif: ['"Cormorant Garamond"', 'serif'],
             },
             animation: {
                 'fade-in': 'fadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',

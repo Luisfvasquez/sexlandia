@@ -4,7 +4,7 @@
             
             {{-- Columna Izquierda --}}
             <div class="lg:col-span-5 lg:sticky lg:top-32 animate-slide-up-fade">
-                <h2 id="benefits-title" class="text-6xl lg:text-[7rem] leading-[1] text-white font-bold tracking-tight">
+                <h2 id="benefits-title" class="text-4xl sm:text-6xl lg:text-[7rem] leading-[1] text-white font-bold tracking-tight">
                     Bueno<br>
                     <em class="font-serif italic text-rose-500 font-normal">saberlo.</em>
                 </h2>

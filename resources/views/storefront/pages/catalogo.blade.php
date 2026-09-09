@@ -13,14 +13,14 @@
         $activeCat = request('category', 'all');
     @endphp
 
-    <section class="relative bg-ink border-t border-white/5 overflow-hidden pt-32 pb-24 lg:pb-32">
+    <section class="relative bg-ink border-t border-white/5 overflow-hidden pt-28 sm:pt-32 pb-24 lg:pb-32">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(141,38,61,0.08),_transparent_60%)] pointer-events-none"></div>
 
         <div class="relative w-full max-w-7xl mx-auto px-6 lg:px-8">
             {{-- Cabecera --}}
             <div class="mb-12 lg:mb-16 animate-slide-up-fade">
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">Catálogo completo · Stock verificado</p>
-                <h1 class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     Todo lo disponible<br>
                     <em class="font-serif italic text-rose-500 font-normal">hoy en {{ config('site.location.city') }}.</em>
                 </h1>
@@ -74,10 +74,11 @@
                                         ? number_format($stock / 1000, 2, ',', '.') . ' KG'
                                         : ((int) $stock) . ' DISPONIBLES')
                                     : 'AGOTADO');
-                            $waText = rawurlencode('Hola ' . config('site.brand.name') . ', me interesa: ' . $product->name);
+                            $productUrl = route('storefront.product', $product->slug);
+                            $waText = rawurlencode('Hola ' . config('site.brand.name') . ', me interesa: ' . $product->name . ' → ' . $product->public_url);
                         @endphp
                         <article class="group relative flex flex-col animate-slide-up-fade" style="animation-delay: {{ ($loop->index % 8) * 60 }}ms">
-                            <div class="relative w-full aspect-[4/5] bg-black overflow-hidden mb-5 border border-white/10 group-hover:border-rose-500/40 transition-colors duration-700">
+                            <a href="{{ $productUrl }}" class="relative w-full aspect-[4/5] bg-black overflow-hidden mb-5 border border-white/10 group-hover:border-rose-500/40 transition-colors duration-700 block" aria-label="Ver {{ $product->name }}">
                                 <div class="absolute inset-0 bg-ink/40 group-hover:bg-transparent transition-colors duration-[1.5s] pointer-events-none z-10"></div>
                                 <x-sl.product-media :product="$product"
                                     class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s] ease-out" />
@@ -93,11 +94,11 @@
                                         ${{ number_format($usd, 2, ',', '.') }}
                                     </span>
                                 </div>
-                            </div>
+                            </a>
 
                             <div class="flex-1 flex flex-col">
-                                <h3 class="text-lg text-white font-serif italic mb-2 leading-tight group-hover:text-rose-400 transition-colors duration-500">
-                                    {{ $product->name }}
+                                <h3 class="text-lg text-white font-serif italic mb-2 leading-tight transition-colors duration-500">
+                                    <a href="{{ $productUrl }}" class="hover:text-rose-400 group-hover:text-rose-400 transition-colors">{{ $product->name }}</a>
                                 </h3>
                                 @if ($product->description)
                                     <p class="text-neutral-400 font-light text-xs line-clamp-2 mb-4 leading-relaxed">

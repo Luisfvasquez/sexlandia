@@ -17,7 +17,7 @@
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">
                     Colección Oficial · {{ \Illuminate\Support\Str::upper(config('site.brand.name')) }}
                 </p>
-                <h2 id="coleccion-title" class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h2 id="coleccion-title" class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     Descubre la<br>
                     <em class="font-serif italic text-rose-500 font-normal">colección completa.</em>
                 </h2>
@@ -44,7 +44,7 @@
     <div x-ref="scroller" class="w-full overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide pl-6 lg:pl-[max(2rem,calc((100vw-80rem)/2))] scroll-smooth">
         <div class="flex gap-6 lg:gap-10 w-max pr-6 lg:pr-[max(2rem,calc((100vw-80rem)/2))]">
             @foreach ($g as $p)
-                @php $waText = rawurlencode('Hola ' . config('site.brand.name') . ', me interesa: ' . $p->name); @endphp
+                @php $waText = rawurlencode('Hola ' . config('site.brand.name') . ', me interesa: ' . $p->name . ' → ' . $p->public_url); @endphp
                 <a href="https://wa.me/{{ config('site.contact.whatsapp') }}?text={{ $waText }}" target="_blank" rel="noopener" class="group relative flex flex-col w-[85vw] md:w-[50vw] lg:w-[450px] snap-center snap-always">
                     
                     <div class="relative aspect-[3/4] bg-black overflow-hidden border border-white/10 group-hover:border-rose-500/50 transition-colors duration-500">

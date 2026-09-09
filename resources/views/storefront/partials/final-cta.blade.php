@@ -24,7 +24,7 @@
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold">
                     EXPERIENCIA {{ \Illuminate\Support\Str::upper(config('site.brand.name')) }}
                 </p>
-                <h2 id="final-cta-title" class="text-6xl lg:text-[7rem] leading-[1.05] text-white font-bold tracking-tight">
+                <h2 id="final-cta-title" class="text-4xl sm:text-6xl lg:text-[7rem] leading-[1.05] text-white font-bold tracking-tight">
                     ¿Viste algo<br>
                     <em class="font-serif italic text-rose-500 font-normal">que te gustó?</em>
                 </h2>

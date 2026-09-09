@@ -31,6 +31,16 @@ return [
     'age_gate' => true,
 
     // -------------------------------------------------------------------
+    // URL pública canónica (sin barra final).
+    // -------------------------------------------------------------------
+    // Se usa para construir enlaces que salen del sitio (mensajes de WhatsApp,
+    // etiquetas canónicas, JSON-LD, Open Graph). En producción define en el .env:
+    //   SITE_URL=https://sexlandiaboutique.com
+    // (si no, cae a APP_URL). Así los enlaces compartidos nunca muestran el
+    // dominio de desarrollo (sexlandia.test).
+    'url' => rtrim(env('SITE_URL', env('APP_URL', 'http://localhost')), '/'),
+
+    // -------------------------------------------------------------------
     // Contacto
     // -------------------------------------------------------------------
     'contact' => [
@@ -38,9 +48,9 @@ return [
         'whatsapp' => '584120000000',
         'whatsapp_display' => '+58 412 000 0000',
         'email' => 'hola@sexlandia.com',
-        'instagram' => 'https://instagram.com/sexlandia',
-        'instagram_handle' => '@sexlandia',
-        'tiktok' => 'https://tiktok.com/@sexlandia',
+        'instagram' => 'https://www.instagram.com/sexlandiaboutique/',
+        'instagram_handle' => '@sexlandiaboutique',
+        /* 'tiktok' => 'https://tiktok.com/@sexlandia', */
     ],
 
     // -------------------------------------------------------------------
@@ -52,8 +62,8 @@ return [
         'region' => 'Distrito Capital',
         'country' => 'VE',
         'postal_code' => '1010',
-        'latitude' => 10.4806,
-        'longitude' => -66.9036,
+        'latitude' => 10.48161802960652,
+        'longitude' => -66.85832813655286,
         'price_range' => '$$',
         // URL "embed" de Google Maps (Compartir → Insertar un mapa → copiar src del iframe)
         'maps_embed_url' => 'https://www.google.com/maps?q=Caracas,Venezuela&output=embed',

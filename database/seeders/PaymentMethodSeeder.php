@@ -8,10 +8,12 @@ use Illuminate\Database\Seeder;
 class PaymentMethodSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds. Idempotente: se puede re-ejecutar sin duplicar.
      */
     public function run(): void
     {
+        $requiresReference = ['Zelle', 'Binance', 'Transferencia', 'Pago Móvil'];
+
         $paymentMethods = [
             'Efectivo',
             'Zelle',
@@ -23,19 +25,13 @@ class PaymentMethodSeeder extends Seeder
         ];
 
         foreach ($paymentMethods as $method) {
-            if ($method == 'Zelle' or $method == 'Binance' or $method == 'Transferencia' or $method == 'Pago Móvil') {
-                PaymentMethod::create([
-                    'name' => $method,
+            PaymentMethod::firstOrCreate(
+                ['name' => $method],
+                [
                     'is_active' => true,
-                    'requires_reference' => true,
-                ]);
-            } else {
-                PaymentMethod::create([
-                    'name' => $method,
-                    'is_active' => true,
-                    'requires_reference' => false,
-                ]);
-            }
+                    'requires_reference' => in_array($method, $requiresReference, true),
+                ]
+            );
         }
     }
 }

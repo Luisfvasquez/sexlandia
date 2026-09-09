@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     
-                    <h2 id="inventario-title" class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight mb-8">
+                    <h2 id="inventario-title" class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight mb-8">
                         Lo ves aquí.<br>
                         <em class="font-serif italic text-rose-500 font-normal">Lo encuentras allá.</em>
                     </h2>

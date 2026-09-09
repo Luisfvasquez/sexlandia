@@ -3,3 +3,42 @@
 @tailwind utilities;
 
 [x-cloak] { display: none !important; }
+
+/*
+| Panel admin: paleta oscura SEXLANDIA.
+| Los controles de formulario sin clase de fondo explícita quedarían blancos
+| sobre el lienzo oscuro; aquí se fuerzan superficies y texto coherentes.
+*/
+body.bg-ink {
+    color-scheme: dark;
+}
+
+body.bg-ink input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+body.bg-ink select,
+body.bg-ink textarea {
+    background-color: #171515;
+    border-color: rgb(255 255 255 / 0.15);
+    color: #f3eee8;
+}
+
+body.bg-ink input::placeholder,
+body.bg-ink textarea::placeholder {
+    color: rgb(243 238 232 / 0.4);
+}
+
+body.bg-ink input:focus,
+body.bg-ink select:focus,
+body.bg-ink textarea:focus {
+    border-color: #8d263d;
+    --tw-ring-color: #8d263d;
+}
+
+body.bg-ink option {
+    background-color: #171515;
+    color: #f3eee8;
+}
+
+/* Scrollbars acordes al tema oscuro */
+body.bg-ink ::-webkit-scrollbar { width: 10px; height: 10px; }
+body.bg-ink ::-webkit-scrollbar-track { background: #171515; }
+body.bg-ink ::-webkit-scrollbar-thumb { background: rgb(255 255 255 / 0.12); border-radius: 999px; }

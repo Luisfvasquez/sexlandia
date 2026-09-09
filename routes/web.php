@@ -12,15 +12,18 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserRoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ClientPanelController::class, 'storefront'])->name('storefront');
 Route::get('/catalogo', [ClientPanelController::class, 'catalog'])->name('storefront.catalog');
+// Ficha de producto pública. La URL usa el slug (SEO), nunca el id.
+Route::get('/product/{product:slug}', [ClientPanelController::class, 'productShow'])->name('storefront.product');
 Route::get('/nosotros', [ClientPanelController::class, 'nosotros'])->name('nosotros');
 Route::get('/contacto', [ClientPanelController::class, 'contacto'])->name('contacto');
-Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Compatibilidad: nombres antiguos del panel de cliente → nuevas ubicaciones.
 Route::get('/client/productos', fn () => redirect()->route('storefront.catalog', request()->query()))->name('client.products');
@@ -64,6 +67,7 @@ Route::middleware(['auth', 'role:admin'])
             Route::post('orders/{order}/approve', 'approve')->name('admin.orders.approve');
             Route::post('orders/{order}/reject', 'reject')->name('admin.orders.reject');
             Route::post('orders/{order}/proof', 'uploadProof')->name('admin.orders.proof');
+            Route::get('orders/proofs/{image}', 'proofImage')->name('admin.orders.proofImage');
             Route::post('orders/{order}/deliver', 'deliver')->name('admin.orders.deliver');
 
             // Rutas API para el Punto de Venta (POS)

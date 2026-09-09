@@ -51,7 +51,7 @@
 
     {{-- Marca de agua gigante --}}
     <div class="relative w-full overflow-hidden text-center select-none pointer-events-none mt-12 md:-mt-12" aria-hidden="true">
-        <span class="block text-[15vw] leading-[0.7] font-black text-white/5 uppercase tracking-tighter whitespace-nowrap w-full">
+        <span class="block text-[13vw] sm:text-[15vw] leading-[0.7] font-black text-white/5 uppercase tracking-tighter whitespace-nowrap w-full">
             SIGUE CURIOSO.
         </span>
     </div>

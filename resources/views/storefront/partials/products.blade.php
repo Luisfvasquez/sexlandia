@@ -12,7 +12,7 @@
         {{-- Cabecera --}}
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 lg:mb-24 space-y-8 md:space-y-0 animate-slide-up-fade">
             <div>
-                <h2 id="productos-title" class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h2 id="productos-title" class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     Cosas que seguro<br>
                     <em class="font-serif italic text-rose-500 font-normal">te van a encantar.</em>
                 </h2>
@@ -41,21 +41,22 @@
                                     ? number_format($stock / 1000, 2, ',', '.') . ' KG'
                                     : ((int) $stock) . ' DISPONIBLES')
                                 : 'AGOTADO');
-                        $waText = rawurlencode('Hola ' . config('site.brand.name') . ', me interesa: ' . $product->name);
+                        $productUrl = route('storefront.product', $product->slug);
+                        $waText = rawurlencode('Hola ' . config('site.brand.name') . ', me interesa: ' . $product->name . ' → ' . $product->public_url);
                         $delay = ($loop->index % 3) * 150;
                     @endphp
                     <article class="group relative flex flex-col animate-slide-up-fade" style="animation-delay: {{ $delay }}ms">
-                        
+
                         {{-- Contenedor de Imagen --}}
-                        <div class="relative w-full aspect-[4/5] bg-black overflow-hidden mb-6 border border-white/10 group-hover:border-rose-500/40 transition-colors duration-700">
+                        <a href="{{ $productUrl }}" class="relative w-full aspect-[4/5] bg-black overflow-hidden mb-6 border border-white/10 group-hover:border-rose-500/40 transition-colors duration-700 block" aria-label="Ver {{ $product->name }}">
                             {{-- Efecto de oscurecimiento pasivo, se va en hover --}}
                             <div class="absolute inset-0 bg-ink/40 group-hover:bg-transparent transition-colors duration-[1.5s] pointer-events-none z-10"></div>
-                            
-                            <x-sl.product-media 
-                                :product="$product" 
-                                class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s] ease-out" 
+
+                            <x-sl.product-media
+                                :product="$product"
+                                class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s] ease-out"
                             />
-                            
+
                             {{-- Badge Categoría --}}
                             @if ($product->category)
                                 <div class="absolute top-4 left-4 z-20">
@@ -71,12 +72,12 @@
                                     ${{ number_format($usd, 2, ',', '.') }}
                                 </span>
                             </div>
-                        </div>
+                        </a>
 
                         {{-- Información del Producto --}}
                         <div class="flex-1 flex flex-col">
-                            <h3 class="text-xl text-white font-serif italic mb-2 group-hover:text-rose-400 transition-colors duration-500">
-                                {{ $product->name }}
+                            <h3 class="text-xl text-white font-serif italic mb-2 transition-colors duration-500">
+                                <a href="{{ $productUrl }}" class="hover:text-rose-400 group-hover:text-rose-400 transition-colors">{{ $product->name }}</a>
                             </h3>
                             
                             @if ($product->description)

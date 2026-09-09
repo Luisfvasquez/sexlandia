@@ -19,9 +19,17 @@ class SitemapController extends Controller
             ['loc' => route('storefront.catalog'), 'priority' => '0.9', 'changefreq' => 'daily'],
         ];
 
-        $lastmod = optional(
-            Product::where('status', 'active')->latest('updated_at')->first()
-        )->updated_at?->toAtomString();
+        $products = Product::where('status', 'active')->latest('updated_at')->get(['slug', 'updated_at']);
+
+        foreach ($products as $product) {
+            $urls[] = [
+                'loc' => route('storefront.product', $product->slug),
+                'priority' => '0.8',
+                'changefreq' => 'weekly',
+            ];
+        }
+
+        $lastmod = $products->first()?->updated_at?->toAtomString();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
