@@ -8,7 +8,7 @@
     </style>
 
     <div class="relative w-full max-w-7xl mx-auto px-6 lg:px-8 mb-24">
-        <h2 id="interrupt-title" class="text-5xl lg:text-[7rem] leading-[1.02] text-white font-bold tracking-tight animate-slide-up-fade">
+        <h2 id="interrupt-title" class="text-4xl sm:text-5xl lg:text-[7rem] leading-[1.02] text-white font-bold tracking-tight animate-slide-up-fade">
             No necesitas<br>
             <em class="font-serif italic text-rose-500 font-normal">una razón</em><br>
             para tener curiosidad.
@@ -25,16 +25,16 @@
             {{-- La tira que se mueve. Duplicamos la data para que el loop no se corte --}}
             <div class="flex animate-marquee whitespace-nowrap">
                 @foreach ($g->concat($g)->concat($g) as $p)
-                    <div class="relative w-40 md:w-56 mx-4 group">
+                    <a href="{{ route('storefront.product', $p->slug) }}" class="relative w-40 md:w-56 mx-4 group block" aria-label="Ver {{ $p->name }}">
                         <div class="aspect-[4/5] bg-black overflow-hidden border border-white/10 group-hover:border-rose-500/50 transition-colors duration-500">
-                            <x-sl.product-media 
-                                :product="$p" 
-                                size="thumb" 
-                                class="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-[1.5s]" 
-                                alt="{{ $p->name }}" 
+                            <x-sl.product-media
+                                :product="$p"
+                                size="thumb"
+                                class="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-[1.5s]"
+                                alt="{{ $p->name }}"
                             />
                         </div>
-                    </div>
+                    </a>
                 @endforeach
             </div>
         </div>

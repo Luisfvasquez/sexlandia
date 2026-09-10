@@ -12,7 +12,7 @@
             <p class="text-rose-600 font-medium tracking-[0.3em] uppercase text-xs md:text-sm animate-slide-up-fade opacity-0">
                 {{ config('site.brand.eyebrow') }}
             </p>
-            <h1 class="flex flex-col text-6xl md:text-[6rem] xl:text-[7rem] leading-[0.9]">
+            <h1 class="flex flex-col text-5xl min-[400px]:text-6xl md:text-[6rem] xl:text-[7rem] leading-[0.9]">
                 <span class="font-sans font-bold text-white tracking-tighter animate-slide-up-fade opacity-0 [animation-delay:200ms]">
                     {{ $hero['title'][0] }}
                 </span>

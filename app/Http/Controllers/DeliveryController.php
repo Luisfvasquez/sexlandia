@@ -147,12 +147,28 @@ class DeliveryController extends Controller
      */
     public function show($id)
     {
+        $user = auth()->user();
+
         $order = Order::with([
             'client',
             'details.product',
             'details.bulk',
             'payments.paymentMethod',
-        ])->findOrFail($id);
+        ])
+            ->where('id', $id)
+            // Un repartidor solo puede ver un paquete asignado a él o uno que
+            // aún esté disponible para tomar. El admin puede ver cualquiera.
+            ->when(! $user->hasRole('admin'), function ($query) use ($user) {
+                $query->where(function ($scoped) use ($user) {
+                    $scoped->where('delivery_user_id', $user->id)
+                        ->orWhere(function ($available) {
+                            $available->whereNull('delivery_user_id')
+                                ->whereNull('delivered_at')
+                                ->whereIn('status', ['ready_for_delivery', 'ready_for_pickup']);
+                        });
+                });
+            })
+            ->firstOrFail();
 
         return view('delivery.show', compact('order'));
     }

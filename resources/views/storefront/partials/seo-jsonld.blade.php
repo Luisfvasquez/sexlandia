@@ -84,12 +84,13 @@
                     'category' => $p->category->name ?? null,
                     'image' => $img ?: null,
                     'sku' => $p->sku ?: null,
+                    'url' => $p->public_url,
                     'offers' => [
                         '@type' => 'Offer',
                         'price' => number_format($p->display_price, 2, '.', ''),
                         'priceCurrency' => 'USD',
                         'availability' => $inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-                        'url' => route('storefront.catalog'),
+                        'url' => $p->public_url,
                     ],
                 ]),
             ];

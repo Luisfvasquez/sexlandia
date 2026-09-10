@@ -15,7 +15,7 @@
                     <p class="text-rose-600 text-xs tracking-[0.3em] uppercase font-bold">
                         {{ $about['eyebrow'] }}
                     </p>
-                    <h2 class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                    <h2 class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                         {{ $about['heading'][0] }}<br>
                         <em class="font-serif italic text-rose-500 font-normal">{{ $about['heading'][1] }}</em>
                     </h2>

@@ -90,6 +90,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'admin.orders.approve',
             'admin.orders.reject',
             'admin.orders.proof',
+            'admin.orders.proofImage',
             'admin.orders.deliver',
 
             // Punto de Venta (POS)

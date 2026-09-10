@@ -4,8 +4,15 @@
 @endphp
 <section id="nosotros" class="relative min-h-[100dvh] flex items-center py-24 bg-ink border-t border-white/5 overflow-hidden" aria-labelledby="nosotros-title">
     <div class="relative w-full max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-16 items-center">
-            
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+            {{-- Titulo (flujo normal en móvil, superpuesto en desktop) --}}
+            <h2 id="nosotros-title" class="lg:hidden text-4xl sm:text-6xl leading-[1.05] text-white font-bold tracking-tight animate-slide-up-fade">
+                {{ $about['story_heading'][0] }}
+                {{ $about['story_heading'][1] }}
+                <em class="font-serif italic text-rose-500 font-normal">{{ $about['story_heading'][2] }}</em>
+            </h2>
+
             {{-- Composicion Grafica (Izquierda) --}}
             <div class="relative w-full aspect-[4/5] lg:aspect-square animate-slide-up-fade">
                 {{-- Imagen base (Fondo) --}}
@@ -17,9 +24,9 @@
                     <x-sl.product-media :product="$g->get(1) ?? null" class="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-[2s] ease-out" alt="Selección {{ config('site.brand.name') }}" />
                 </div>
 
-                {{-- Titulo Absoluto superpuesto --}}
-                <div class="absolute top-1/2 left-0 -translate-y-1/2 w-[120%] z-20 pointer-events-none md:-left-8">
-                    <h2 id="nosotros-title" class="text-6xl lg:text-[7rem] leading-[1.02] text-white font-bold tracking-tight drop-shadow-2xl">
+                {{-- Titulo Absoluto superpuesto (solo desktop) --}}
+                <div class="hidden lg:block absolute top-1/2 left-0 -translate-y-1/2 lg:-left-8 w-[120%] z-20 pointer-events-none">
+                    <h2 aria-hidden="true" class="lg:text-[7rem] leading-[1.02] text-white font-bold tracking-tight drop-shadow-2xl">
                         {{ $about['story_heading'][0] }}<br>
                         {{ $about['story_heading'][1] }}<br>
                         <em class="font-serif italic text-rose-500 font-normal">{{ $about['story_heading'][2] }}</em>

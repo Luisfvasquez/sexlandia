@@ -10,6 +10,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // `MODIFY COLUMN ... ENUM` es sintaxis exclusiva de MySQL. En sqlite
+        // (usado en la suite de tests) la columna `status` ya es un string libre.
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement("ALTER TABLE orders MODIFY COLUMN status ENUM('pending', 'processing', 'ready_for_pickup', 'ready_for_delivery', 'in_transit', 'completed', 'delivered', 'cancelled') DEFAULT 'pending'");
     }
 
@@ -18,6 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement("ALTER TABLE orders MODIFY COLUMN status ENUM('pending', 'processing', 'ready_for_pickup', 'completed', 'delivered', 'cancelled') DEFAULT 'pending'");
     }
 };

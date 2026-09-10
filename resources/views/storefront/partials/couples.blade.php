@@ -30,7 +30,7 @@
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold">
                     Conexión &amp; Cómplices
                 </p>
-                <h2 id="couples-title" class="text-6xl lg:text-[6rem] leading-[1.05] text-white font-bold tracking-tight">
+                <h2 id="couples-title" class="text-4xl sm:text-6xl lg:text-[6rem] leading-[1.05] text-white font-bold tracking-tight">
                     ¿Mejor<br>
                     <em class="font-serif italic text-rose-500 font-normal">juntos?</em>
                 </h2>

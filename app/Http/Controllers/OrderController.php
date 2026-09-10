@@ -11,6 +11,7 @@ use App\Http\Requests\UploadProofRequest;
 use App\Models\AccountReceivable;
 use App\Models\Bulk;
 use App\Models\Client;
+use App\Models\Image;
 use App\Models\InventoryMovement;
 use App\Models\Order;
 use App\Models\OrderPayment;
@@ -19,6 +20,9 @@ use App\Models\PaymentProof;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderController extends Controller
 {
@@ -61,7 +65,7 @@ class OrderController extends Controller
             DB::beginTransaction();
 
             $file = $request->file('payment_proof');
-            $path = $file->store('receipts', 'public');
+            $path = $file->store('receipts', 'local');
 
             $proof = PaymentProof::create([
                 'order_id' => $order->id,
@@ -73,7 +77,7 @@ class OrderController extends Controller
 
             $proof->images()->create([
                 'path' => $path,
-                'disk' => 'public',
+                'disk' => 'local',
                 'original_name' => $file->getClientOriginalName(),
                 'mime_type' => $file->getMimeType(),
                 'size' => $file->getSize(),
@@ -98,6 +102,24 @@ class OrderController extends Controller
 
             return back()->withErrors(['error' => 'Error al subir el comprobante: '.$e->getMessage()]);
         }
+    }
+
+    /**
+     * Sirve la imagen de un comprobante de pago desde el disco privado.
+     * Solo accesible dentro del panel admin (grupo de rutas role:admin) y
+     * únicamente para imágenes que pertenezcan a un PaymentProof.
+     */
+    public function proofImage(Image $image): StreamedResponse
+    {
+        abort_unless($image->imageable_type === PaymentProof::class, 404);
+
+        $disk = Storage::disk($image->disk ?: 'local');
+
+        abort_unless($disk->exists($image->path), 404);
+
+        return $disk->response($image->path, null, [
+            'Cache-Control' => 'private, no-store, max-age=0',
+        ]);
     }
 
     public function approve(ApproveOrderRequest $request, Order $order)
@@ -278,12 +300,17 @@ class OrderController extends Controller
 
     public function storeClient(Request $request)
     {
-        $request->validate(['identification' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-]+$/', 'unique:clients,identification']]);
+        $validated = $request->validate([
+            'identification' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-]+$/', 'unique:clients,identification'],
+            'name' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        $name = trim($validated['name'] ?? '');
 
         $client = Client::create([
             'uuid' => Str::uuid(),
-            'identification' => $request->identification,
-            'name' => 'Consumidor Final', // Nombre por defecto
+            'identification' => $validated['identification'],
+            'name' => $name !== '' ? $name : 'Consumidor Final', // Nombre por defecto
             'is_active' => true,
         ]);
 

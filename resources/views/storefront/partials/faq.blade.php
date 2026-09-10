@@ -5,7 +5,7 @@
             {{-- Columna Izquierda --}}
             <div class="lg:col-span-5 lg:sticky lg:top-32 animate-slide-up-fade">
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">SIN PENA</p>
-                <h2 id="faq-title" class="text-5xl lg:text-[6rem] leading-[1.05] text-white font-bold tracking-tight">
+                <h2 id="faq-title" class="text-4xl sm:text-5xl lg:text-[6rem] leading-[1.05] text-white font-bold tracking-tight">
                     Cosas que<br>
                     <em class="font-serif italic text-rose-500 font-normal">nos preguntan.</em>
                 </h2>

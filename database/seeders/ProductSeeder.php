@@ -20,6 +20,16 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
+        // Salvaguarda: este seeder BORRA todo el catálogo. En producción solo se
+        // ejecuta si SEED_DEMO_DATA=true o si aún no hay productos cargados.
+        $allowDemo = filter_var(env('SEED_DEMO_DATA', ! app()->isProduction()), FILTER_VALIDATE_BOOL);
+
+        if (! $allowDemo && Product::query()->exists()) {
+            $this->command?->warn('ProductSeeder omitido: ya hay productos y SEED_DEMO_DATA no está activo.');
+
+            return;
+        }
+
         Schema::disableForeignKeyConstraints();
         Product::truncate();
         Inventory::truncate();

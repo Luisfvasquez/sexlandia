@@ -18,8 +18,14 @@ class ProcessOrderAction
     {
         $clientId = $data['client_id'] ?? 0;
 
-        if ($data['client_id'] == null) {
-            $data['client_id'] = Client::where('identification', $clientId)->first()->id;
+        if (empty($data['client_id'])) {
+            $fallbackClient = Client::where('identification', $clientId)->first();
+
+            if (! $fallbackClient) {
+                throw new \Exception('Debes seleccionar un cliente válido para procesar la venta.');
+            }
+
+            $data['client_id'] = $fallbackClient->id;
         }
 
         $totalOrder = collect($data['cart'])->sum('subtotal');

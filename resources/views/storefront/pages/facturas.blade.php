@@ -11,7 +11,7 @@
         <div class="relative w-full max-w-5xl mx-auto px-6 lg:px-8">
             <div class="mb-12 animate-slide-up-fade">
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">Estado de cuenta</p>
-                <h1 class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     Mis <em class="font-serif italic text-rose-500 font-normal">facturas</em> y abonos.
                 </h1>
                 <p class="mt-6 text-neutral-400 font-light text-sm lg:text-base leading-relaxed max-w-xl border-l border-white/10 pl-5">

@@ -26,7 +26,7 @@
             {{-- Columna Derecha (Info) --}}
             <div class="flex flex-col animate-slide-up-fade [animation-delay:200ms] lg:pt-12">
                 <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">TIENDA FÍSICA · CONTACTO</p>
-                <h2 id="location-title" class="text-6xl lg:text-[7rem] leading-[1.05] text-white font-bold tracking-tight mb-16">
+                <h2 id="location-title" class="text-4xl sm:text-6xl lg:text-[7rem] leading-[1.05] text-white font-bold tracking-tight mb-16">
                     Pasa a<br>
                     <em class="font-serif italic text-rose-500 font-normal">saludar.</em>
                 </h2>

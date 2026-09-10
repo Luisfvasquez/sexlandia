@@ -7,17 +7,23 @@
 
     <title>@yield('title', 'Sistema')</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 
-<body class="bg-gray-100" x-data="{ sidebarOpen: false }">
+<body class="bg-ink text-cream" x-data="{ sidebarOpen: false }">
 
     <div class="flex min-h-screen relative">
 
         {{-- Overlay oscuro para móviles cuando el sidebar está abierto --}}
         <div x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false"
-            class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 lg:hidden" style="display: none;">
+            class="fixed inset-0 bg-black/60 z-20 lg:hidden" style="display: none;">
         </div>
 
         {{-- Sidebar --}}

@@ -9,7 +9,7 @@
                 <p class="text-rose-600 text-xs tracking-[0.3em] uppercase font-bold">
                     Compra por Sensación
                 </p>
-                <h2 id="categorias-title" class="text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
+                <h2 id="categorias-title" class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
                     No todo empieza<br>
                     <em class="font-serif italic text-rose-500 font-normal">con una categoría.</em>
                 </h2>
