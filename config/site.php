@@ -20,11 +20,15 @@ return [
     // -------------------------------------------------------------------
     'brand' => [
         'name' => 'SEXLANDIA',
+        'legal_name' => 'SEXLANDIA Boutique C.A.', // TODO PRODUCCIÓN: razón social real (para JSON-LD Organization)
         'name_split' => ['SEX', 'Landia'], // se pinta "SEX" + "Landia" (serif)
         'tagline' => 'Bienestar sexual · Boutique',
         'claim' => 'Curiosidad sin pena. +18.',
         'eyebrow' => 'BIENESTAR SEXUAL · SEXLANDIA BOUTIQUE — SIN MOMENTOS INCÓMODOS',
         'city_note' => 'OBJETOS PARA SENTIR · CARACAS',
+        // Descripción corta de la empresa (JSON-LD Organization / Store).
+        'description' => 'Sex shop en Caracas especializado en juguetes íntimos, lubricantes y bienestar sexual, con marcas originales, empaque 100% discreto, asesoría sin pena y delivery en toda Venezuela.',
+        'founding_date' => '2023', // TODO PRODUCCIÓN: año de apertura real
     ],
 
     // Activa la advertencia de contenido para adultos en la primera visita
@@ -57,17 +61,31 @@ return [
     // Ubicación / Tienda física
     // -------------------------------------------------------------------
     'location' => [
-        'address_lines' => ['Caracas, Venezuela'],
+        // Nombre EXACTO de la ficha de Google Business Profile. Debe coincidir
+        // carácter por carácter en el sitio, Google y cualquier directorio.
+        'place_name' => 'Sexshop | Sexlandia boutique',
+        'street' => 'Quinta Mary, Calle París',
+        'sector' => 'Las Mercedes',
+        'municipality' => 'Baruta',
+        'address_lines' => ['Quinta Mary, Calle París', 'Las Mercedes', 'Caracas 1060, Miranda'],
         'city' => 'Caracas',
-        'region' => 'Distrito Capital',
+        'region' => 'Miranda',
         'country' => 'VE',
-        'postal_code' => '1010',
-        'latitude' => 10.48161802960652,
-        'longitude' => -66.85832813655286,
+        'postal_code' => '1060',
+        'latitude' => 10.481575269450095,
+        'longitude' => -66.85814419176661,
         'price_range' => '$$',
-        // URL "embed" de Google Maps (Compartir → Insertar un mapa → copiar src del iframe)
-        'maps_embed_url' => 'https://www.google.com/maps?q=Caracas,Venezuela&output=embed',
-        'maps_link' => 'https://maps.google.com/?q=Caracas,Venezuela',
+        // Zonas que atiende (delivery / envíos). Alimenta `areaServed` en JSON-LD.
+        'area_served' => ['Caracas', 'Las Mercedes', 'Chacao', 'Baruta', 'Distrito Capital', 'Miranda', 'La Guaira', 'Venezuela'],
+        'currencies_accepted' => 'USD, VES',
+        'payment_accepted' => 'Efectivo, Pago Móvil, Zelle, Transferencia bancaria, Punto de venta',
+        // Mapa embebido (coordenadas exactas del local).
+        'maps_embed_url' => 'https://www.google.com/maps?q=10.481575269450095,-66.85814419176661&z=17&output=embed',
+        // Enlace a la ficha real de Google Maps (CID del negocio). Se usa como
+        // `maps_link`, `hasMap` en JSON-LD y `sameAs` (vincula la entidad con su
+        // ficha de Google → refuerza la señal local).
+        'maps_link' => 'https://www.google.com/maps?cid=9859455897173022925',
+        'map_place_url' => 'https://www.google.com/maps?cid=9859455897173022925',
         // Horario legible + estructurado para SEO (día: Mo-Sa, abre, cierra)
         'hours_text' => ['Lun — Sáb / 10:00 — 19:00', 'Envíos y delivery todos los días'],
         'opening_hours' => [
@@ -139,12 +157,27 @@ return [
     // SEO por defecto
     // -------------------------------------------------------------------
     'seo' => [
-        'title' => 'SEXLANDIA · Sex Shop en Caracas | Juguetes, Lubricantes y Bienestar Sexual',
+        'title' => 'Sex Shop en Caracas | SEXLANDIA — Juguetes, Lubricantes y Bienestar Sexual',
         'title_suffix' => ' | SEXLANDIA',
-        'description' => 'Sex shop en Caracas con catálogo real y stock verificado: succionadores, vibradores, lubricantes y accesorios de marcas originales. Empaque 100% discreto, asesoría sin pena, delivery y envíos a toda Venezuela.',
-        'keywords' => 'sex shop caracas, juguetes sexuales venezuela, satisfyer caracas, lubricantes, vibradores, succionador de clitoris, bienestar sexual, tienda erotica caracas, sexshop delivery',
-        'og_image' => null, // ruta absoluta o null → usa la primera foto de producto
+        'description' => 'Sexshop en Caracas con catálogo real y stock verificado: succionadores, vibradores, lubricantes y accesorios de marcas originales. Empaque 100% discreto, asesoría sin pena, delivery en Caracas y envíos a toda Venezuela.',
+        'keywords' => 'sexshop caracas, sex shop caracas, sex shop en caracas, tienda erotica caracas, juguetes sexuales caracas, juguetes sexuales venezuela, satisfyer caracas, lubricantes caracas, vibradores caracas, succionador de clitoris, bienestar sexual, sexshop delivery caracas',
+        // Frase corta que se antepone (solo para lectores de pantalla y buscadores)
+        // al H1 editorial de la portada, para que el H1 indexable sea relevante.
+        'h1_prefix' => 'Sex shop en Caracas —',
+        // Imagen para compartir (Open Graph / Twitter / JSON-LD). 1200×630 px.
+        // Deja una imagen real en public/ y apunta aquí; si es null se usa el logo
+        // y, en su defecto, la primera foto de producto.
+        'og_image' => '/sexlandia/og-image.jpg', // TODO PRODUCCIÓN: subir public/sexlandia/og-image.jpg (1200×630)
+        'logo' => '/sexlandia/logo.jpg',
         'author' => 'SEXLANDIA Boutique',
         'locale' => 'es_VE',
+        'twitter_site' => '', // p.ej. '@sexlandiaboutique' si abren cuenta en X
+        // Verificación de propiedad (pega aquí SOLO el valor del token, sin comillas
+        // extra). Deja en '' si aún no lo tienes; la etiqueta no se pinta si va vacío.
+        'google_site_verification' => env('GOOGLE_SITE_VERIFICATION', ''),
+        'facebook_domain_verification' => env('FACEBOOK_DOMAIN_VERIFICATION', ''),
+        // Geolocalización para meta tags "geo.*" (algunos motores locales las leen).
+        'geo_region' => 'VE-M',       // ISO 3166-2 del estado Miranda (Las Mercedes, Baruta)
+        'geo_placename' => 'Las Mercedes, Caracas',
     ],
 ];

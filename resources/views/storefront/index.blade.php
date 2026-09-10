@@ -1,7 +1,7 @@
 @extends('storefront.layout')
 
 {{-- Los @push de SEO deben ejecutarse antes de que el layout pinte el <head> --}}
-@include('storefront.partials.seo-jsonld')
+@include('storefront.partials.seo-jsonld', ['includeFaq' => true, 'includeProductList' => true])
 
 @section('content')
     @if (session('success') || $errors->any())

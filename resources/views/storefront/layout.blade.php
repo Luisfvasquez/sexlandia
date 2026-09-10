@@ -1,16 +1,35 @@
 @php
     $siteSeo = config('site.seo');
     $brandName = config('site.brand.name');
+    $siteUrl = rtrim(config('site.url'), '/');
     $pageTitle = trim($__env->yieldContent('title')) ?: $siteSeo['title'];
     $metaDescription = trim($__env->yieldContent('meta_description')) ?: $siteSeo['description'];
-    $canonical = trim($__env->yieldContent('canonical')) ?: url()->current();
-    $ogImage = trim($__env->yieldContent('og_image')) ?: ($siteSeo['og_image'] ?? null);
-    if ($ogImage && ! \Illuminate\Support\Str::startsWith($ogImage, ['http://', 'https://'])) {
-        $ogImage = url($ogImage);
-    }
+    // Canónica sobre el dominio público declarado (config/site.php → url), nunca
+    // el host de desarrollo, y sin query string salvo que la página la fije.
+    $canonical = trim($__env->yieldContent('canonical')) ?: $siteUrl.request()->getPathInfo();
+    $robots = trim($__env->yieldContent('robots')) ?: 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+
+    $isRemote = fn (?string $p) => $p && \Illuminate\Support\Str::startsWith($p, ['http://', 'https://']);
+    $toAbsolute = function (?string $path) use ($siteUrl, $isRemote) {
+        if (! $path) {
+            return null;
+        }
+
+        return $isRemote($path) ? $path : $siteUrl.'/'.ltrim($path, '/');
+    };
+
+    // Imagen social: la que fije la página → og_image de config → logo.
+    // Si la ruta local no existe todavía (p. ej. falta subir og-image.jpg) se
+    // cae al logo y no se declaran dimensiones fijas.
+    $ogCandidate = trim($__env->yieldContent('og_image')) ?: ($siteSeo['og_image'] ?? null);
+    $ogIsDesignated = $ogCandidate
+        && ($isRemote($ogCandidate) || file_exists(public_path(ltrim($ogCandidate, '/'))));
+    $ogImage = $toAbsolute($ogIsDesignated ? $ogCandidate : ($siteSeo['logo'] ?? null));
+    $logoUrl = $toAbsolute($siteSeo['logo'] ?? null);
+    $loc = config('site.location');
 @endphp
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-VE">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,9 +40,28 @@
     <meta name="description" content="{{ $metaDescription }}">
     <meta name="keywords" content="{{ $siteSeo['keywords'] }}">
     <meta name="author" content="{{ $siteSeo['author'] }}">
-    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+    <meta name="robots" content="{{ $robots }}">
+    <meta name="googlebot" content="{{ $robots }}">
     <link rel="canonical" href="{{ $canonical }}">
+    <link rel="alternate" hreflang="es-VE" href="{{ $canonical }}">
+    <link rel="alternate" hreflang="es" href="{{ $canonical }}">
+    <link rel="alternate" hreflang="x-default" href="{{ $canonical }}">
     <meta name="theme-color" content="#8d263d">
+    <meta name="application-name" content="{{ $brandName }}">
+    <meta name="apple-mobile-web-app-title" content="{{ $brandName }}">
+
+    @if (! empty($siteSeo['google_site_verification']))
+        <meta name="google-site-verification" content="{{ $siteSeo['google_site_verification'] }}">
+    @endif
+    @if (! empty($siteSeo['facebook_domain_verification']))
+        <meta name="facebook-domain-verification" content="{{ $siteSeo['facebook_domain_verification'] }}">
+    @endif
+
+    {{-- Señales geográficas locales (Caracas) --}}
+    <meta name="geo.region" content="{{ $siteSeo['geo_region'] ?? 'VE-A' }}">
+    <meta name="geo.placename" content="{{ $siteSeo['geo_placename'] ?? $loc['city'] }}">
+    <meta name="geo.position" content="{{ $loc['latitude'] }};{{ $loc['longitude'] }}">
+    <meta name="ICBM" content="{{ $loc['latitude'] }}, {{ $loc['longitude'] }}">
 
     {{-- Contenido para adultos: etiqueta RTA + rating estándar --}}
     <meta name="rating" content="adult">
@@ -38,11 +76,19 @@
     <meta property="og:url" content="{{ $canonical }}">
     @if ($ogImage)
         <meta property="og:image" content="{{ $ogImage }}">
-        <meta property="og:image:alt" content="{{ $brandName }}">
+        <meta property="og:image:secure_url" content="{{ $ogImage }}">
+        <meta property="og:image:alt" content="{{ $brandName }} · Sex shop en {{ $loc['city'] }}">
+        @if ($ogIsDesignated)
+            <meta property="og:image:width" content="1200">
+            <meta property="og:image:height" content="630">
+        @endif
     @endif
 
     {{-- Twitter --}}
     <meta name="twitter:card" content="{{ $ogImage ? 'summary_large_image' : 'summary' }}">
+    @if (! empty($siteSeo['twitter_site']))
+        <meta name="twitter:site" content="{{ $siteSeo['twitter_site'] }}">
+    @endif
     <meta name="twitter:title" content="{{ $pageTitle }}">
     <meta name="twitter:description" content="{{ $metaDescription }}">
     @if ($ogImage)
@@ -50,69 +96,21 @@
     @endif
 
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/jpeg" href="{{ asset('sexlandia/logo.jpg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('sexlandia/logo.jpg') }}">
 
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/sexlandia.css') }}">
     @stack('head')
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cream: '#f3eee8', wine: '#8d263d', 'wine-dark': '#5c1424',
-                        chocolate: '#2b1c18', blush: '#d7aaa6', powder: '#e7d1ce',
-                        butter: '#e8d5a6', ink: '#171515', bone: '#fbf8f3',
-                        /* remapeo: las vistas de cliente heredadas usan la escala "indigo" → vino SEXLANDIA */
-                        indigo: {
-                            50: '#f7edef', 100: '#eed7dc', 200: '#e0b8c0', 300: '#cd8f9c',
-                            400: '#b25f72', 500: '#9c3a4f', 600: '#8d263d',
-                            700: '#5c1424', 800: '#4a1620', 900: '#3a141b', 950: '#250b11',
-                        },
-                    },
-                    fontFamily: {
-                        sans: ['"Montserrat"', 'sans-serif'],
-                        serif: ['"Cormorant Garamond"', 'serif'],
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-                        'slide-up-fade': 'slideUpFade 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-                        'breathe': 'breathe 4s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUpFade: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        breathe: {
-                            '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(225, 29, 72, 0)' },
-                            '50%': { transform: 'scale(1.03)', boxShadow: '0 0 25px 5px rgba(225, 29, 72, 0.3)' },
-                        }
-                    }
-                },
-            },
-        };
-    </script>
-
-    <style>
-        /* Helpers usados por las vistas de cliente reubicadas en el shell del storefront */
-        [x-cloak] { display: none !important; }
-        .scrollbar-none::-webkit-scrollbar { display: none; }
-        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-        .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(23,21,21,.18); border-radius: 999px; }
-        .animate-spin-slow { animation: sl-spin 8s linear infinite; }
-        @keyframes sl-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-    </style>
+    {{-- Tailwind compilado (Vite). Sustituye al antiguo cdn.tailwindcss.com;
+         el tema vive en tailwind.storefront.config.js. --}}
+    @vite('resources/css/storefront.css')
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
     <script defer src="{{ asset('js/sexlandia.js') }}"></script>

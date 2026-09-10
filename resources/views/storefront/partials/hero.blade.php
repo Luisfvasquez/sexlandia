@@ -13,6 +13,9 @@
                 {{ config('site.brand.eyebrow') }}
             </p>
             <h1 class="flex flex-col text-5xl min-[400px]:text-6xl md:text-[6rem] xl:text-[7rem] leading-[0.9]">
+                @if ($prefix = config('site.seo.h1_prefix'))
+                    <span class="sr-only">{{ $prefix }} {{ config('site.brand.name') }}. </span>
+                @endif
                 <span class="font-sans font-bold text-white tracking-tighter animate-slide-up-fade opacity-0 [animation-delay:200ms]">
                     {{ $hero['title'][0] }}
                 </span>

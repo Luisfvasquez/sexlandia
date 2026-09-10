@@ -1,16 +1,75 @@
-@php $navBase = route('storefront'); @endphp
+@php
+    $navBase = route('storefront');
+    $brand = config('site.brand.name');
+    $city = config('site.location.city');
+
+    $searchTerm = trim((string) request('search'));
+    $activeCat = request('category', 'all');
+    $activeCategory = ($activeCat !== 'all')
+        ? ($categories->firstWhere('id', (int) $activeCat) ?? null)
+        : null;
+    $currentPage = (int) request('page', 1);
+
+    // Título / descripción / H1 dependientes del filtro activo.
+    if ($searchTerm !== '') {
+        $seoTitle = 'Resultados para «' . $searchTerm . '» · ' . $brand;
+        $seoDesc = 'Productos que coinciden con «' . $searchTerm . '» en el catálogo de ' . $brand . ', sex shop en ' . $city . '.';
+    } elseif ($activeCategory) {
+        $seoTitle = $activeCategory->name . ' en ' . $city . ' · ' . $brand;
+        $seoDesc = 'Compra ' . \Illuminate\Support\Str::lower($activeCategory->name) . ' en ' . $city . ': stock verificado, marcas originales, empaque discreto y delivery. Catálogo de ' . $brand . '.';
+    } else {
+        $seoTitle = 'Sex shop en ' . $city . ' · Catálogo completo · ' . $brand;
+        $seoDesc = 'Catálogo completo de ' . $brand . ', sexshop en ' . $city . ': succionadores, vibradores, lubricantes y accesorios con stock verificado, empaque discreto y delivery.';
+    }
+
+    // Canónica: consolida búsquedas y paginado hacia la URL limpia del filtro,
+    // siempre sobre el dominio público (config/site.php → url).
+    $catalogCanonical = rtrim(config('site.url'), '/') . '/catalogo'
+        . ($activeCategory ? '?category=' . $activeCategory->id : '');
+
+    // Las páginas de búsqueda y las paginadas (>1) no aportan contenido único: follow pero no index.
+    $catalogRobots = ($searchTerm !== '' || $currentPage > 1)
+        ? 'noindex,follow'
+        : 'index,follow,max-image-preview:large';
+
+    $extraSchemas = [
+        [
+            '@context' => 'https://schema.org',
+            '@type' => 'CollectionPage',
+            'name' => $seoTitle,
+            'description' => $seoDesc,
+            'url' => $catalogCanonical,
+            'isPartOf' => ['@id' => rtrim(config('site.url'), '/') . '/#website'],
+            'inLanguage' => 'es-VE',
+        ],
+        [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => array_values(array_filter([
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Inicio', 'item' => route('storefront')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => 'Catálogo', 'item' => route('storefront.catalog')],
+                $activeCategory
+                    ? ['@type' => 'ListItem', 'position' => 3, 'name' => $activeCategory->name, 'item' => $catalogCanonical]
+                    : null,
+            ])),
+        ],
+    ];
+@endphp
 
 @extends('storefront.layout')
 
-@section('title', 'Catálogo · ' . config('site.brand.name'))
-@section('meta_description', 'Explora el catálogo completo de ' . config('site.brand.name') . ': succionadores, vibradores, lubricantes y más, con stock verificado en ' . config('site.location.city') . '.')
+@section('title', $seoTitle)
+@section('meta_description', $seoDesc)
+@section('canonical', $catalogCanonical)
+@section('robots', $catalogRobots)
+
+@include('storefront.partials.seo-jsonld', ['extraSchemas' => $extraSchemas, 'includeProductList' => true])
 
 @section('content')
     @php
         $rate = $exchangeRate ? (float) str_replace(',', '.', $exchangeRate) : 1;
         if ($rate <= 0) { $rate = 1; }
         $wa = config('site.contact.whatsapp');
-        $activeCat = request('category', 'all');
     @endphp
 
     <section class="relative bg-ink border-t border-white/5 overflow-hidden pt-28 sm:pt-32 pb-24 lg:pb-32">
@@ -19,10 +78,20 @@
         <div class="relative w-full max-w-7xl mx-auto px-6 lg:px-8">
             {{-- Cabecera --}}
             <div class="mb-12 lg:mb-16 animate-slide-up-fade">
-                <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">Catálogo completo · Stock verificado</p>
+                <p class="text-rose-600 text-[10px] tracking-[0.3em] uppercase font-bold mb-6">
+                    Sex shop en {{ $city }} · Stock verificado
+                </p>
                 <h1 class="text-4xl sm:text-5xl lg:text-7xl leading-[1.05] text-white font-bold tracking-tight">
-                    Todo lo disponible<br>
-                    <em class="font-serif italic text-rose-500 font-normal">hoy en {{ config('site.location.city') }}.</em>
+                    @if ($searchTerm !== '')
+                        Resultados para<br>
+                        <em class="font-serif italic text-rose-500 font-normal">«{{ $searchTerm }}».</em>
+                    @elseif ($activeCategory)
+                        {{ $activeCategory->name }}<br>
+                        <em class="font-serif italic text-rose-500 font-normal">en {{ $city }}.</em>
+                    @else
+                        Todo lo disponible<br>
+                        <em class="font-serif italic text-rose-500 font-normal">hoy en {{ $city }}.</em>
+                    @endif
                 </h1>
             </div>
 
