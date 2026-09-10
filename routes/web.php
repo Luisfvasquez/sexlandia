@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SupplierController;
@@ -24,6 +25,7 @@ Route::get('/product/{product:slug}', [ClientPanelController::class, 'productSho
 Route::get('/nosotros', [ClientPanelController::class, 'nosotros'])->name('nosotros');
 Route::get('/contacto', [ClientPanelController::class, 'contacto'])->name('contacto');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/robots.txt', RobotsController::class)->name('robots');
 
 // Compatibilidad: nombres antiguos del panel de cliente → nuevas ubicaciones.
 Route::get('/client/productos', fn () => redirect()->route('storefront.catalog', request()->query()))->name('client.products');

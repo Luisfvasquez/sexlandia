@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Sistema de Inventario'),
+    'name' => env('APP_NAME', 'Sexlandia'),
 
     /*
     |--------------------------------------------------------------------------

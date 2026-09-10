@@ -1,0 +1,23 @@
+@config "../../tailwind.storefront.config.js";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+| Helpers que antes vivían en un <style> en línea dentro de
+| `storefront/layout.blade.php` (junto al CDN de Tailwind).
+*/
+[x-cloak] { display: none !important; }
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(23, 21, 21, .18); border-radius: 999px; }
+
+.animate-spin-slow { animation: sl-spin 8s linear infinite; }
+@keyframes sl-spin {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
+}

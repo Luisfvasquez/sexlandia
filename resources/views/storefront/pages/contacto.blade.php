@@ -23,7 +23,7 @@
         ],
     ];
 @endphp
-@include('storefront.partials.seo-jsonld', ['extraSchemas' => $extraSchemas])
+@include('storefront.partials.seo-jsonld', ['extraSchemas' => $extraSchemas, 'includeFaq' => true])
 
 @section('content')
     <section class="hero section-pad" style="min-height:46svh;">
