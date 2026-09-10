@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /client
+Disallow: /delivery
+Disallow: /login
+Disallow: /register
+Disallow: /password
+Disallow: /profile
+Disallow: /*?*search=
+
+Sitemap: https://sexlandiaboutique.com/sitemap.xml

@@ -74,7 +74,7 @@
                                 class="relative w-14 h-14 overflow-hidden border border-white/10 hover:border-rose-500 focus:border-rose-500 focus:outline-none transition-colors duration-300 group {{ $loop->first ? 'ring-1 ring-offset-2 ring-offset-ink ring-rose-500' : '' }}" 
                                 aria-label="Ver foto {{ $loop->iteration }}">
                                 <div class="absolute inset-0 bg-black/60 group-hover:bg-transparent transition-colors duration-300"></div>
-                                <img src="{{ $img->thumb_url }}" class="w-full h-full object-cover" alt="" loading="lazy">
+                                <img src="{{ $img->thumb_url }}" class="w-full h-full object-cover" alt="{{ $featured->name }} — foto {{ $loop->iteration }}" loading="lazy">
                             </button>
                         @endforeach
                     </div>
@@ -104,7 +104,7 @@
                                 <button type="button" class="px-4 text-neutral-400 hover:text-white transition-colors h-full" @click="qty++">+</button>
                             </div>
                             
-                            <button type="button" class="flex-1 bg-white text-black font-medium tracking-[0.15em] text-xs uppercase hover:bg-rose-600 hover:text-white transition-all duration-300 border border-transparent" @click="addToCart(@js($featured), qty)">
+                            <button type="button" class="flex-1 bg-white text-black font-medium tracking-[0.15em] text-xs uppercase hover:bg-rose-600 hover:text-white transition-all duration-300 border border-transparent" @click="addToCart(@js($featured->toCartPayload()), qty)">
                                 Añadir al carrito
                             </button>
                         </div>

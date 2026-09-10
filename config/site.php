@@ -24,7 +24,7 @@ return [
         'name_split' => ['SEX', 'Landia'], // se pinta "SEX" + "Landia" (serif)
         'tagline' => 'Bienestar sexual · Boutique',
         'claim' => 'Curiosidad sin pena. +18.',
-        'eyebrow' => 'BIENESTAR SEXUAL · SEXLANDIA BOUTIQUE — SIN MOMENTOS INCÓMODOS',
+        'eyebrow' => 'SEX SHOP EN CARACAS · SEXLANDIA BOUTIQUE — BIENESTAR SEXUAL SIN PENA',
         'city_note' => 'OBJETOS PARA SENTIR · CARACAS',
         // Descripción corta de la empresa (JSON-LD Organization / Store).
         'description' => 'Sex shop en Caracas especializado en juguetes íntimos, lubricantes y bienestar sexual, con marcas originales, empaque 100% discreto, asesoría sin pena y delivery en toda Venezuela.',
@@ -49,9 +49,9 @@ return [
     // -------------------------------------------------------------------
     'contact' => [
         // Número en formato internacional SIN "+" ni espacios (para wa.me)
-        'whatsapp' => '584120000000',
-        'whatsapp_display' => '+58 412 000 0000',
-        'email' => 'hola@sexlandia.com',
+        'whatsapp' => '584241671775',
+        'whatsapp_display' => '+58 424-1671775',
+        'email' => 'sexlandiaboutique@gmail.com',
         'instagram' => 'https://www.instagram.com/sexlandiaboutique/',
         'instagram_handle' => '@sexlandiaboutique',
         /* 'tiktok' => 'https://tiktok.com/@sexlandia', */
@@ -157,13 +157,15 @@ return [
     // SEO por defecto
     // -------------------------------------------------------------------
     'seo' => [
-        'title' => 'Sex Shop en Caracas | SEXLANDIA — Juguetes, Lubricantes y Bienestar Sexual',
+        // Título: 50-60 caracteres (los buscadores cortan a ~580 px / ~60).
+        'title' => 'Sex Shop en Caracas | Sexlandia — Juguetes y Lubricantes',
         'title_suffix' => ' | SEXLANDIA',
-        'description' => 'Sexshop en Caracas con catálogo real y stock verificado: succionadores, vibradores, lubricantes y accesorios de marcas originales. Empaque 100% discreto, asesoría sin pena, delivery en Caracas y envíos a toda Venezuela.',
+        // Meta description: 120-155 caracteres (Google trunca a partir de ~155).
+        'description' => 'Sexshop en Caracas con catálogo real y stock verificado: juguetes, lubricantes y lencería originales. Empaque discreto y envíos a toda Venezuela.',
         'keywords' => 'sexshop caracas, sex shop caracas, sex shop en caracas, tienda erotica caracas, juguetes sexuales caracas, juguetes sexuales venezuela, satisfyer caracas, lubricantes caracas, vibradores caracas, succionador de clitoris, bienestar sexual, sexshop delivery caracas',
-        // Frase corta que se antepone (solo para lectores de pantalla y buscadores)
-        // al H1 editorial de la portada, para que el H1 indexable sea relevante.
-        'h1_prefix' => 'Sex shop en Caracas —',
+        // H1 de la portada (el bloque editorial "Siente algo distinto" es
+        // decorativo). Texto corto y con la palabra clave; 10-70 caracteres.
+        'h1' => 'Sex shop en Caracas · Sexlandia — juguetes y lubricantes',
         // Imagen para compartir (Open Graph / Twitter / JSON-LD). 1200×630 px.
         // Deja una imagen real en public/ y apunta aquí; si es null se usa el logo
         // y, en su defecto, la primera foto de producto.

@@ -63,6 +63,34 @@ class Product extends Model implements Auditable
     }
 
     /**
+     * Payload mínimo que consume el carrito Alpine (`storefrontCart.addToCart`).
+     * Se inyecta en las vistas con `@js(...)`; enviar el modelo completo por cada
+     * tarjeta infla el HTML y ralentiza el parseo de Alpine (INP).
+     *
+     * @return array{
+     *     id:int, name:string, category:array{name:string}, unit_type:string,
+     *     unit_label:string, display_price:float, price:float,
+     *     track_inventory:bool, allow_negative_stock:bool,
+     *     inventory:array{stock:float}|null
+     * }
+     */
+    public function toCartPayload(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'category' => ['name' => $this->category?->name ?? 'Varios'],
+            'unit_type' => $this->unit_type,
+            'unit_label' => $this->unit_label,
+            'display_price' => $this->display_price,
+            'price' => (float) $this->price,
+            'track_inventory' => (bool) $this->track_inventory,
+            'allow_negative_stock' => (bool) $this->allow_negative_stock,
+            'inventory' => $this->inventory ? ['stock' => (float) $this->inventory->stock] : null,
+        ];
+    }
+
+    /**
      * Precio "display" (USD) convertido a bolívares con la tasa activa.
      * Los precios se almacenan en USD; el monto en Bs es siempre USD * tasa.
      */

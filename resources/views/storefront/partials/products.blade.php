@@ -111,7 +111,7 @@
                                             <input type="text" x-model="qty" class="w-full text-center bg-transparent border-none text-xs p-0 focus:ring-0 text-white font-mono" readonly>
                                             <button type="button" class="px-2 w-8 text-neutral-400 hover:text-rose-500 transition-colors h-full" @click="qty++">+</button>
                                         </div>
-                                        <button type="button" class="flex-1 bg-white text-black font-medium tracking-[0.15em] text-[10px] uppercase hover:bg-rose-600 hover:text-white transition-all duration-300 border border-transparent" @click="addToCart(@js($product), qty)">
+                                        <button type="button" class="flex-1 bg-white text-black font-medium tracking-[0.15em] text-[10px] uppercase hover:bg-rose-600 hover:text-white transition-all duration-300 border border-transparent" @click="addToCart(@js($product->toCartPayload()), qty)">
                                             Añadir
                                         </button>
                                     @else

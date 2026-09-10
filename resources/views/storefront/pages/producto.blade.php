@@ -123,7 +123,7 @@
                                     :class="current === @js($full) ? 'border-rose-500' : 'border-white/10 hover:border-white/40'"
                                     class="relative w-16 h-20 sm:w-20 sm:h-24 shrink-0 overflow-hidden border transition-colors"
                                     aria-label="Ver foto {{ $loop->iteration }}">
-                                    <img src="{{ $img->variantUrl('thumb') }}" alt="" loading="lazy" class="w-full h-full object-cover">
+                                    <img src="{{ $img->variantUrl('thumb') }}" alt="{{ $product->name }} — foto {{ $loop->iteration }}" loading="lazy" class="w-full h-full object-cover">
                                 </button>
                             @endforeach
                         </div>
@@ -170,7 +170,7 @@
                                     <input type="text" x-model="qty" inputmode="numeric" class="w-full text-center bg-transparent border-none text-sm p-0 focus:ring-0 text-white font-mono" aria-label="Cantidad">
                                     <button type="button" class="px-4 h-full text-neutral-400 hover:text-rose-500 transition-colors" @click="qty++" aria-label="Sumar">+</button>
                                 </div>
-                                <button type="button" class="flex-1 bg-white text-black font-medium tracking-[0.15em] text-xs uppercase hover:bg-rose-600 hover:text-white transition-all duration-300" @click="addToCart(@js($product), qty)">
+                                <button type="button" class="flex-1 bg-white text-black font-medium tracking-[0.15em] text-xs uppercase hover:bg-rose-600 hover:text-white transition-all duration-300" @click="addToCart(@js($product->toCartPayload()), qty)">
                                     Añadir al carrito
                                 </button>
                             </div>

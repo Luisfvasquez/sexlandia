@@ -50,9 +50,28 @@ it('renders core SEO head tags on the homepage', function () {
         ->toContain('name="robots" content="index,follow')
         ->toContain('property="og:type" content="website"')
         ->toContain('property="og:image"')
-        ->toContain('hreflang="x-default"')
         ->toContain('name="geo.region" content="VE-M"')
-        ->toContain('name="geo.placename"');
+        ->toContain('name="geo.placename"')
+        // Sitio monolingüe: sin etiquetas hreflang (los auditores marcan
+        // "alternates duplicados" cuando todas apuntan a la misma URL).
+        ->not->toContain('rel="alternate" hreflang');
+});
+
+it('keeps title, meta description and H1 within the length limits audit tools expect', function () {
+    $html = get(route('storefront'))->assertOk()->getContent();
+
+    preg_match('/<title>([^<]*)<\/title>/', $html, $t);
+    preg_match('/<meta name="description" content="([^"]*)"/', $html, $d);
+    preg_match('/<h1[^>]*>([\s\S]*?)<\/h1>/i', $html, $h1);
+    $h1Text = trim(preg_replace('/\s+/', ' ', strip_tags($h1[1])));
+    // textContent crudo, tal como lo miden los auditores (incluye espacios de plantilla).
+    $h1Raw = strip_tags($h1[1]);
+
+    expect(mb_strlen($t[1]))->toBeLessThanOrEqual(60);
+    expect(mb_strlen($d[1]))->toBeGreaterThanOrEqual(80)->toBeLessThanOrEqual(160);
+    expect(mb_strlen($h1Text))->toBeLessThanOrEqual(70);
+    expect(mb_strlen($h1Raw))->toBeLessThanOrEqual(90); // sin bloat de indentación
+    expect(substr_count($html, '<h1'))->toBe(1);
 });
 
 it('emits Organization, Store and WebSite JSON-LD on every storefront page', function (string $route) {
@@ -149,4 +168,23 @@ it('serves storefront CSS from the compiled Vite bundle, not the Tailwind Play C
         ->not->toContain('cdn.tailwindcss.com')
         ->not->toContain('tailwind.config =')
         ->toContain('/build/assets/storefront-');
+});
+
+it('injects only a lightweight cart payload per product card, not the full model', function () {
+    $product = makeSeoProduct(['name' => 'Vibrador Aurora']);
+
+    $payload = $product->toCartPayload();
+    expect(array_keys($payload))->toEqualCanonicalizing([
+        'id', 'name', 'category', 'unit_type', 'unit_label',
+        'display_price', 'price', 'track_inventory', 'allow_negative_stock', 'inventory',
+    ]);
+
+    $html = get(route('storefront'))->assertOk()->getContent();
+
+    // El blob @js de la tarjeta no debe arrastrar campos del modelo completo.
+    expect($html)
+        ->toContain('addToCart(')
+        ->not->toContain('sku_barcode')
+        ->not->toContain('"public_url"')
+        ->not->toContain('display_price_bs');
 });

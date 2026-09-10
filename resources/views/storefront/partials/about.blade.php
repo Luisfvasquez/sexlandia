@@ -26,11 +26,12 @@
 
                 {{-- Titulo Absoluto superpuesto (solo desktop) --}}
                 <div class="hidden lg:block absolute top-1/2 left-0 -translate-y-1/2 lg:-left-8 w-[120%] z-20 pointer-events-none">
-                    <h2 aria-hidden="true" class="lg:text-[7rem] leading-[1.02] text-white font-bold tracking-tight drop-shadow-2xl">
+                    {{-- Tipografía decorativa (no es un encabezado: evita H2 repetido). --}}
+                    <div aria-hidden="true" class="lg:text-[7rem] leading-[1.02] text-white font-bold tracking-tight drop-shadow-2xl">
                         {{ $about['story_heading'][0] }}<br>
                         {{ $about['story_heading'][1] }}<br>
                         <em class="font-serif italic text-rose-500 font-normal">{{ $about['story_heading'][2] }}</em>
-                    </h2>
+                    </div>
                 </div>
             </div>
 

@@ -43,9 +43,7 @@
     <meta name="robots" content="{{ $robots }}">
     <meta name="googlebot" content="{{ $robots }}">
     <link rel="canonical" href="{{ $canonical }}">
-    <link rel="alternate" hreflang="es-VE" href="{{ $canonical }}">
-    <link rel="alternate" hreflang="es" href="{{ $canonical }}">
-    <link rel="alternate" hreflang="x-default" href="{{ $canonical }}">
+    {{-- Sitio de un solo idioma: sin hreflang (evita "alternates duplicados"). --}}
     <meta name="theme-color" content="#8d263d">
     <meta name="application-name" content="{{ $brandName }}">
     <meta name="apple-mobile-web-app-title" content="{{ $brandName }}">

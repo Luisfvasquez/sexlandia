@@ -12,20 +12,14 @@
             <p class="text-rose-600 font-medium tracking-[0.3em] uppercase text-xs md:text-sm animate-slide-up-fade opacity-0">
                 {{ config('site.brand.eyebrow') }}
             </p>
-            <h1 class="flex flex-col text-5xl min-[400px]:text-6xl md:text-[6rem] xl:text-[7rem] leading-[0.9]">
-                @if ($prefix = config('site.seo.h1_prefix'))
-                    <span class="sr-only">{{ $prefix }} {{ config('site.brand.name') }}. </span>
-                @endif
-                <span class="font-sans font-bold text-white tracking-tighter animate-slide-up-fade opacity-0 [animation-delay:200ms]">
-                    {{ $hero['title'][0] }}
-                </span>
-                <span class="font-serif italic text-rose-500 -mt-2 xl:-mt-6 ml-8 md:ml-20 relative z-10 drop-shadow-[0_0_15px_rgba(225,29,72,0.4)] animate-slide-up-fade opacity-0 [animation-delay:400ms]">
-                    {{ $hero['title'][1] }}
-                </span>
-                <span class="font-sans font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-neutral-100 to-neutral-500 animate-slide-up-fade opacity-0 [animation-delay:600ms] pr-4">
-                    {{ $hero['title'][2] }}
-                </span>
-            </h1>
+            {{-- H1 semántico y conciso (10-70 car.). El bloque de abajo es
+                 tipografía editorial decorativa, no un encabezado. --}}
+            <h1 class="sr-only">{{ config('site.seo.h1') ?: config('site.seo.title') }}</h1>
+            <div class="flex flex-col text-5xl min-[400px]:text-6xl md:text-[6rem] xl:text-[7rem] leading-[0.9]" aria-hidden="true">
+                <span class="font-sans font-bold text-white tracking-tighter animate-slide-up-fade opacity-0 [animation-delay:200ms]">{{ $hero['title'][0] }}</span>
+                <span class="font-serif italic text-rose-500 -mt-2 xl:-mt-6 ml-8 md:ml-20 relative z-10 drop-shadow-[0_0_15px_rgba(225,29,72,0.4)] animate-slide-up-fade opacity-0 [animation-delay:400ms]">{{ $hero['title'][1] }}</span>
+                <span class="font-sans font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-neutral-100 to-neutral-500 animate-slide-up-fade opacity-0 [animation-delay:600ms] pr-4">{{ $hero['title'][2] }}</span>
+            </div>
             <p class="text-neutral-400 text-lg xl:text-xl max-w-md leading-relaxed font-light animate-slide-up-fade opacity-0 [animation-delay:800ms]">
                 {{ $hero['text'] }}
             </p>

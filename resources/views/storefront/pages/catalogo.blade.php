@@ -199,7 +199,7 @@
                                                     <input type="text" x-model="qty" inputmode="numeric" class="w-full text-center bg-transparent border-none text-xs p-0 focus:ring-0 text-white font-mono" aria-label="Cantidad de {{ $product->name }}">
                                                     <button type="button" class="px-2 w-8 text-neutral-400 hover:text-rose-500 transition-colors h-full" @click="qty++" aria-label="Sumar">+</button>
                                                 </div>
-                                                <button type="button" class="flex-1 h-full bg-white text-black font-medium tracking-[0.15em] text-[10px] uppercase hover:bg-rose-600 hover:text-white transition-all duration-300 border border-transparent" @click="addToCart(@js($product), qty)">
+                                                <button type="button" class="flex-1 h-full bg-white text-black font-medium tracking-[0.15em] text-[10px] uppercase hover:bg-rose-600 hover:text-white transition-all duration-300 border border-transparent" @click="addToCart(@js($product->toCartPayload()), qty)">
                                                     Añadir
                                                 </button>
                                             </div>
