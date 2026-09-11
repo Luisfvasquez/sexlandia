@@ -37,34 +37,21 @@
                         </div>
                         <div class="text-right shrink-0">
                             <button type="button" class="text-[10px] tracking-[0.1em] uppercase text-rose-500 hover:text-rose-400 transition-colors" @click="removeFromCart(item.id)">Quitar</button>
-                            <p class="text-sm font-extrabold text-white mt-2" x-text="formatCurrency(calculateItemTotal(item))"></p>
-                            <p x-show="hasRate" class="text-[11px] font-bold text-rose-400 mt-0.5"
-                                x-text="formatCurrency(calculateItemTotal(item) * safeRate, ' Bs')"></p>
                         </div>
                     </div>
                 </template>
             </div>
 
             <div class="border-t border-white/10 bg-black/30 px-6 py-5">
-                <div class="flex items-baseline justify-between">
-                    <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-neutral-400">Total estimado</span>
-                    <span class="text-2xl font-black text-white" x-text="formatCurrency(calculateTotal())"></span>
-                </div>
-                <p x-show="hasRate" class="text-right text-rose-400 font-bold text-xs mt-1 mb-3"
-                    x-text="formatCurrency(calculateTotal() * safeRate, ' Bs')"></p>
-                <button type="button"
-                    class="w-full mt-3 flex items-center justify-center gap-3 bg-white text-black font-medium tracking-[0.15em] text-[11px] uppercase py-4 hover:bg-rose-600 hover:text-white transition-all duration-300 disabled:bg-neutral-800 disabled:text-neutral-600 disabled:cursor-not-allowed"
-                    :disabled="cart.length === 0" @click="handleCheckout()">
-                    Proceder al pedido
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                </button>
-                <p class="mt-3 text-center text-[11px] text-neutral-500">
-                    o escríbenos por
-                    <a href="https://wa.me/{{ config('site.contact.whatsapp') }}" target="_blank" rel="noopener"
-                        class="text-green-500 font-bold hover:text-green-400 transition-colors">WhatsApp</a>
+                <p class="text-center text-[11px] text-neutral-500 mb-3">
+                    Consulta disponibilidad y precio de tu pedido directamente por WhatsApp.
                 </p>
+                <button type="button"
+                    class="w-full flex items-center justify-center gap-3 bg-green-600 text-white font-medium tracking-[0.15em] text-[11px] uppercase py-4 hover:bg-green-500 transition-all duration-300 disabled:bg-neutral-800 disabled:text-neutral-600 disabled:cursor-not-allowed"
+                    :disabled="cart.length === 0" @click="handleCheckout()">
+                    Consultar por WhatsApp
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.8.8.8-2.7-.2-.3A8 8 0 0112 4zm4.5 9.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.2 7.2 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5.2-.4v-.4l-.8-1.8c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 00-.7.3c-.3.3-1 .9-1 2.2s1 2.6 1.1 2.8c.2.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.4-.6 1.6-1.2.2-.6.2-1 .1-1.2z"/></svg>
+                </button>
             </div>
         </aside>
     </div>

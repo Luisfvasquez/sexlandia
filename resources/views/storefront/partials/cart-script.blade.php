@@ -1,20 +1,10 @@
-@php
-    $safeRate = $exchangeRate ? (float) str_replace(',', '.', $exchangeRate) : 1;
-    if ($safeRate <= 0) {
-        $safeRate = 1;
-    }
-@endphp
 <script>
     function storefrontCart() {
         return {
             cartOpen: false,
-            checkoutOpen: false,
-            authPromptOpen: false,
             cart: [],
-            safeRate: {{ $safeRate }},
-            hasRate: @js((bool) $exchangeRate),
-            isAuthenticated: @js(auth()->check()),
-            userRole: @js(auth()->check() ? (auth()->user()->hasRole('client') ? 'client' : (auth()->user()->hasRole('admin') ? 'admin' : 'other')) : null),
+            waNumber: @js(config('site.contact.whatsapp')),
+            brandName: @js(config('site.brand.name')),
 
             init() {
                 const cached = localStorage.getItem('client_shopping_cart');
@@ -22,7 +12,7 @@
                     try { this.cart = JSON.parse(cached); } catch (e) { this.cart = []; }
                 }
                 window.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') { this.cartOpen = false; this.checkoutOpen = false; this.authPromptOpen = false; }
+                    if (e.key === 'Escape') { this.cartOpen = false; }
                 });
             },
 
@@ -110,15 +100,18 @@
                 return this.cart.map(item => ({ id: item.id, quantity: item.quantity }));
             },
 
+            cartWhatsAppMessage() {
+                const lines = this.cart.map((item, i) =>
+                    (i + 1) + '. ' + item.name + ' — ' + this.formatQuantity(item)
+                );
+                return 'Hola ' + this.brandName + ', quiero consultar disponibilidad y precio de estos productos:\n'
+                    + lines.join('\n');
+            },
+
             handleCheckout() {
                 if (this.cart.length === 0) return;
-                if (!this.isAuthenticated) {
-                    this.authPromptOpen = true;
-                } else if (this.userRole === 'client') {
-                    window.location.href = @js(route('client.checkout.view'));
-                } else {
-                    alert('Tu cuenta tiene rol administrativo. Para realizar pedidos, inicia sesión con una cuenta de cliente.');
-                }
+                const text = encodeURIComponent(this.cartWhatsAppMessage());
+                window.open('https://wa.me/' + this.waNumber + '?text=' + text, '_blank', 'noopener');
             }
         };
     }

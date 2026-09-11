@@ -1,13 +1,9 @@
 @php
-    $rate = $exchangeRate ? (float) str_replace(',', '.', $exchangeRate) : 1;
-    if ($rate <= 0) { $rate = 1; }
     $wa = config('site.contact.whatsapp');
 @endphp
 @if ($featured ?? null)
 @php
     $imgs = $featured->images;
-    $usd = $featured->display_price;
-    $bs = $featured->display_price * $rate;
     $inStock = ! $featured->track_inventory
         || $featured->allow_negative_stock
         || ($featured->inventory && $featured->inventory->stock > 0);
@@ -80,14 +76,9 @@
                     </div>
                 @endif
 
-                {{-- Precio y Stock --}}
-                <div class="border-y border-white/10 py-6 my-6 flex justify-between items-end">
-                    <div class="flex flex-col">
-                        <span class="text-4xl font-light text-white tracking-tight">${{ number_format($usd, 2, ',', '.') }}</span>
-                        @if ($exchangeRate)
-                            <span class="text-xs text-neutral-500 mt-1 font-mono tracking-widest">{{ number_format($bs, 2, ',', '.') }} Bs</span>
-                        @endif
-                    </div>
+                {{-- Stock --}}
+                <div class="border-y border-white/10 py-6 my-6 flex justify-between items-center">
+                    <span class="text-xs text-neutral-500 tracking-wide">Precio y disponibilidad a confirmar por WhatsApp.</span>
                     <div class="flex items-center gap-2 text-[10px] tracking-[0.15em] uppercase {{ $inStock ? 'text-green-500' : 'text-neutral-500' }}">
                         <span class="w-1.5 h-1.5 rounded-full {{ $inStock ? 'bg-green-500 animate-pulse' : 'bg-neutral-500' }}"></span>
                         {{ $inStock ? 'En Stock' : 'Agotado' }}

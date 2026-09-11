@@ -130,7 +130,6 @@
         @include('storefront.partials.footer')
 
         @include('storefront.partials.cart-drawer')
-        @include('storefront.partials.auth-modal')
         @include('storefront.partials.cart-script')
     </div>
 

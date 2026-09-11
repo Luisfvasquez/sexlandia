@@ -3,14 +3,9 @@
 @extends('storefront.layout')
 
 @php
-    $rate = $exchangeRate ? (float) str_replace(',', '.', $exchangeRate) : 1;
-    if ($rate <= 0) {
-        $rate = 1;
-    }
     $wa = config('site.contact.whatsapp');
 
     $usd = $product->display_price;
-    $bs = $usd * $rate;
 
     $trackStock = $product->track_inventory;
     $stock = $product->inventory->stock ?? 0;
@@ -142,13 +137,8 @@
                         {{ $product->name }}
                     </h1>
 
-                    <div class="mt-6 flex items-end justify-between gap-4 border-y border-white/10 py-5">
-                        <div class="flex flex-col">
-                            <span class="text-4xl font-light text-white tracking-tight">${{ number_format($usd, 2, ',', '.') }}</span>
-                            @if ($exchangeRate)
-                                <span class="text-xs text-neutral-500 mt-1 font-mono tracking-widest">{{ number_format($bs, 2, ',', '.') }} Bs</span>
-                            @endif
-                        </div>
+                    <div class="mt-6 flex items-center justify-between gap-4 border-y border-white/10 py-5">
+                        <span class="text-xs text-neutral-500 tracking-wide">Precio y disponibilidad a confirmar por WhatsApp.</span>
                         <div class="flex items-center gap-2 text-[10px] tracking-[0.15em] uppercase font-bold {{ $available ? 'text-green-500' : 'text-neutral-500' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ $available ? 'bg-green-500 animate-pulse' : 'bg-neutral-500' }}"></span>
                             {{ $stockLabel }}
@@ -224,7 +214,6 @@
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                         @foreach ($similar as $s)
                             @php
-                                $sUsd = $s->display_price;
                                 $sStock = $s->inventory->stock ?? 0;
                                 $sAvail = ! $s->track_inventory || $s->allow_negative_stock || $sStock > 0;
                             @endphp
@@ -236,8 +225,7 @@
                                 <h3 class="mt-3 text-sm sm:text-base text-white font-serif italic leading-tight group-hover:text-rose-400 transition-colors line-clamp-2">
                                     {{ $s->name }}
                                 </h3>
-                                <div class="mt-1 flex items-center justify-between">
-                                    <span class="text-sm text-neutral-300 font-light">${{ number_format($sUsd, 2, ',', '.') }}</span>
+                                <div class="mt-1 flex items-center justify-end">
                                     <span class="flex items-center gap-1.5 text-[8px] tracking-[0.15em] uppercase font-bold {{ $sAvail ? 'text-green-500' : 'text-neutral-500' }}">
                                         <span class="w-1 h-1 rounded-full {{ $sAvail ? 'bg-green-500' : 'bg-neutral-500' }}"></span>
                                         {{ $sAvail ? 'Disponible' : 'Agotado' }}

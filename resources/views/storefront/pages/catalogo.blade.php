@@ -67,8 +67,6 @@
 
 @section('content')
     @php
-        $rate = $exchangeRate ? (float) str_replace(',', '.', $exchangeRate) : 1;
-        if ($rate <= 0) { $rate = 1; }
         $wa = config('site.contact.whatsapp');
     @endphp
 
@@ -131,8 +129,6 @@
                 <div class="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-x-6 lg:gap-y-14">
                     @foreach ($products as $product)
                         @php
-                            $usd = $product->display_price;
-                            $bs = $product->display_price * $rate;
                             $trackStock = $product->track_inventory;
                             $stock = $product->inventory->stock ?? 0;
                             $available = ! $trackStock || $product->allow_negative_stock || $stock > 0;
@@ -158,11 +154,6 @@
                                         </span>
                                     </div>
                                 @endif
-                                <div class="absolute bottom-3 right-3 z-20 overflow-hidden">
-                                    <span class="block text-xs font-mono tracking-widest bg-rose-900/90 text-white px-2.5 py-1 backdrop-blur-md border border-rose-500/30 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out">
-                                        ${{ number_format($usd, 2, ',', '.') }}
-                                    </span>
-                                </div>
                             </a>
 
                             <div class="flex-1 flex flex-col">
@@ -177,18 +168,10 @@
 
                                 <div class="mt-auto">
                                     <div class="flex justify-between items-end mb-4 border-t border-white/10 pt-3">
-                                        <div class="flex flex-col gap-1">
-                                            <div class="flex items-center gap-2 text-[9px] tracking-[0.15em] uppercase font-bold {{ $available ? 'text-green-500' : 'text-neutral-500' }}">
-                                                <span class="w-1.5 h-1.5 rounded-full {{ $available ? 'bg-green-500 animate-pulse' : 'bg-neutral-500' }}"></span>
-                                                {{ $stockLabel }}
-                                            </div>
-                                            @if ($exchangeRate)
-                                                <span class="text-neutral-600 font-mono text-[10px] tracking-widest">{{ number_format($bs, 2, ',', '.') }} Bs</span>
-                                            @endif
+                                        <div class="flex items-center gap-2 text-[9px] tracking-[0.15em] uppercase font-bold {{ $available ? 'text-green-500' : 'text-neutral-500' }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $available ? 'bg-green-500 animate-pulse' : 'bg-neutral-500' }}"></span>
+                                            {{ $stockLabel }}
                                         </div>
-                                        <span class="text-base text-white font-light block group-hover:hidden transition-all duration-500">
-                                            ${{ number_format($usd, 2, ',', '.') }}
-                                        </span>
                                     </div>
 
                                     <div x-data="{ qty: 1 }" class="flex flex-col gap-2">
