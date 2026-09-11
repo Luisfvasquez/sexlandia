@@ -158,14 +158,14 @@ return [
     // -------------------------------------------------------------------
     'seo' => [
         // Título: 50-60 caracteres (los buscadores cortan a ~580 px / ~60).
-        'title' => 'Sex Shop en Caracas | Sexlandia — Juguetes y Lubricantes',
+        'title' => 'Sexlandia Boutique - Sex Shop en Caracas',
         'title_suffix' => ' | SEXLANDIA',
         // Meta description: 120-155 caracteres (Google trunca a partir de ~155).
         'description' => 'Sexshop en Caracas con catálogo real y stock verificado: juguetes, lubricantes y lencería originales. Empaque discreto y envíos a toda Venezuela.',
         'keywords' => 'sexshop caracas, sex shop caracas, sex shop en caracas, tienda erotica caracas, juguetes sexuales caracas, juguetes sexuales venezuela, satisfyer caracas, lubricantes caracas, vibradores caracas, succionador de clitoris, bienestar sexual, sexshop delivery caracas',
         // H1 de la portada (el bloque editorial "Siente algo distinto" es
         // decorativo). Texto corto y con la palabra clave; 10-70 caracteres.
-        'h1' => 'Sex shop en Caracas · Sexlandia — juguetes y lubricantes',
+        'h1' => 'Sex shop en Caracas · Sexlandia Boutique',
         // Imagen para compartir (Open Graph / Twitter / JSON-LD). 1200×630 px.
         // Deja una imagen real en public/ y apunta aquí; si es null se usa el logo
         // y, en su defecto, la primera foto de producto.
