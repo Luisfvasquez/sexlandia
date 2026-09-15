@@ -35,8 +35,10 @@
         @endif
 
         {{-- Buscador tradicional (GET) --}}
-        <div class="mb-6 bg-chocolate p-4 rounded-xl shadow-sm border border-white/10 flex flex-col md:flex-row items-center gap-4">
-            <form action="{{ route('admin.products.index') }}" method="GET" class="w-full flex flex-col sm:flex-row gap-3">
+        <div
+            class="mb-6 bg-chocolate p-4 rounded-xl shadow-sm border border-white/10 flex flex-col md:flex-row items-center gap-4">
+            <form action="{{ route('admin.products.index') }}" method="GET"
+                class="w-full flex flex-col sm:flex-row gap-3">
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Buscar por nombre de producto, SKU o código de barras..."
                     class="w-full md:w-1/3 px-4 py-2 border border-white/15 rounded-lg shadow-sm focus:ring-wine focus:border-wine">
@@ -44,7 +46,7 @@
                     class="inline-flex items-center justify-center px-4 py-2 bg-chocolate text-white font-semibold rounded-lg hover:bg-white/10 transition-colors shadow-sm">
                     Buscar
                 </button>
-                @if(request('search'))
+                @if (request('search'))
                     <a href="{{ route('admin.products.index') }}"
                         class="inline-flex items-center justify-center px-4 py-2 bg-white/10 text-cream/90 font-semibold rounded-lg hover:bg-white/15 transition-colors shadow-sm">
                         Limpiar
@@ -94,7 +96,8 @@
                                                 $firstImage = $product->images->first();
                                             @endphp
                                             <img src="{{ $firstImage->thumb_url }}" loading="lazy"
-                                                alt="{{ $firstImage->alt_text ?: $product->name }}" class="w-10 h-10 object-cover rounded-md">
+                                                alt="{{ $firstImage->alt_text ?: $product->name }}"
+                                                class="w-10 h-10 object-cover rounded-md">
                                         @else
                                             {{-- Placeholder si no tiene imagen --}}
                                             <div class="w-10 h-10 bg-white/5 rounded-md flex items-center justify-center">
@@ -125,7 +128,8 @@
                                     ${{ number_format($product->display_price, 2, ',', '.') }}
                                     <span class="text-xs font-normal text-cream/60">{{ $product->unit_label }}</span>
                                     @if ($exchangeRate)
-                                        <span class="block text-xs font-normal text-blush">Bs. {{ number_format($product->display_price_bs, 2, ',', '.') }}</span>
+                                        <span class="block text-xs font-normal text-blush">Bs.
+                                            {{ number_format($product->display_price_bs, 2, ',', '.') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -308,6 +312,11 @@
                                                                     class="mt-1 w-full rounded-lg border-white/15 text-sm"
                                                                     required>
                                                             </div>
+                                                            <div>
+                                                                <label
+                                                                    class="block text-sm font-medium text-cream/90">Descripcion</label>
+                                                                <textarea name="description" rows="3" class="mt-1 w-full rounded-lg border-white/15 text-sm" required>{{ $product->description ?? 'sin descripcion' }}</textarea>
+                                                            </div>
                                                         </div>
 
                                                         {{-- SECCIÓN DE IMÁGENES DENTRO DEL MODAL --}}
@@ -335,7 +344,8 @@
                                                                     @foreach ($product->images as $img)
                                                                         <div
                                                                             class="relative group border rounded-lg overflow-hidden bg-chocolate shadow-sm flex flex-col items-center p-2">
-                                                                            <img src="{{ $img->thumb_url }}" loading="lazy"
+                                                                            <img src="{{ $img->thumb_url }}"
+                                                                                loading="lazy"
                                                                                 class="h-24 w-full object-cover rounded-md"
                                                                                 alt="{{ $img->alt_text ?: 'Miniatura' }}">
 
